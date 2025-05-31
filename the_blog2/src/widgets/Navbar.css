@@ -1,0 +1,476 @@
+/* Navbar.css */
+
+/* --- 1. CONFIGURACIÓN NAVBAR PRINCIPAL --- */
+.navbar {
+  background-color: #000000; /* Coincide con el * global, pero es bueno ser explícito */
+  color: #ffffff;
+  padding: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 70px;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* --- 2. NAVBAR BRAND (LOGO) --- */
+.navbar-brand a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.6em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  margin-right: 20px;
+  display: inline-block;
+  padding-bottom: 15px;
+  margin-bottom: -1px;
+  background-color: transparent; /* Para que no tome el * global */
+}
+
+/* --- 3. NAVBAR MENU, START, END (ESTRUCTURA) --- */
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.navbar-start {
+  display: flex;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #444444;
+  margin-bottom: -16px;
+}
+
+.navbar-end {
+  display: flex;
+  align-items: center;
+}
+
+/* --- 4. NAVBAR ITEMS (LINKS GENERALES, BOTONES) --- */
+.navbar-start .navbar-item {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 0 12px;
+  line-height: 1;
+  position: relative;
+  background-color: transparent;
+}
+
+.navbar-start .navbar-item:not(:first-child)::before {
+  content: "/";
+  color: #777777;
+  margin-right: 24px;
+  font-weight: 300;
+}
+
+.navbar-start .navbar-item:hover {
+  color: #bbbbbb;
+  background-color: transparent; /* Hover no cambia fondo aquí */
+}
+
+.navbar-end .navbar-item,
+.navbar-end button.navbar-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  margin-left: 8px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-end .navbar-item:hover,
+.navbar-end button.navbar-link:hover {
+  color: #ffffff;
+  background-color: #1c1c1c;
+}
+
+.navbar-end button.navbar-link.is-active-dropdown-button {
+  background-color: #1c1c1c;
+  color: #ffffff;
+}
+
+.navbar-end .navbar-item.has-dropdown {
+  position: relative;
+  background-color: transparent;
+}
+
+.navbar-end .navbar-item.has-dropdown:first-child > button.navbar-link::after {
+  content: " +";
+  font-weight: 300;
+  margin-left: 4px;
+  background-color: transparent;
+}
+
+/* --- 5. DROPDOWN HORIZONTAL DE CATEGORÍAS --- */
+.horizontal-categories-container {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  background-color: #050505;
+  border-top: 1px solid #282828;
+  border-bottom: 1px solid #282828;
+  z-index: 998; /* Ligeramente debajo de dropdowns de items de navbar-end */
+  padding: 15px 0;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.horizontal-categories-dropdown {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 20px;
+  max-width: 1100px;
+  padding: 0 20px;
+  background-color: transparent;
+}
+
+.horizontal-category-item {
+  color: #b0b0b0;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 500;
+  text-transform: uppercase;
+  background-color: #000000;
+  border: 1px solid #333333;
+  transition: color 0.2s ease, background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.horizontal-category-item:hover {
+  color: #ffffff;
+  background-color: #181818;
+  border-color: #444444;
+}
+
+.horizontal-categories-dropdown .loading-item,
+.horizontal-categories-dropdown .error-item,
+.horizontal-categories-dropdown .no-categories-item {
+  color: #777777;
+  font-style: italic;
+  padding: 8px 15px;
+  font-size: 0.85em;
+  width: 100%;
+  text-align: center;
+  background-color: transparent;
+}
+
+/* --- 6. SELECTOR DE IDIOMAS MODERNIZADO --- */
+.language-selector-button {
+  gap: 7px;
+  padding: 8px 10px !important; /* !important para sobreescribir padding de .navbar-link si es necesario */
+  border-radius: 6px;
+  background-color: #222222 !important; /* Fondo específico, !important si es necesario */
+  color: #e0e0e0 !important;
+}
+
+.language-selector-button:hover {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+}
+
+.language-selector-button.is-open {
+  background-color: #333333 !important;
+}
+
+.language-selector-button .language-icon {
+  font-size: 1.2em;
+  line-height: 1;
+  filter: grayscale(30%) opacity(80%);
+  background-color: transparent;
+}
+
+.language-selector-button .current-lang-text {
+  font-size: 0.9em;
+  font-weight: 500;
+  background-color: transparent;
+}
+
+.language-selector-button .dropdown-chevron {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid currentColor;
+  transition: transform 0.3s ease;
+  margin-left: 3px;
+  opacity: 0.7;
+  background-color: transparent;
+}
+
+.language-selector-button.is-open .dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+/* Menú desplegable de idiomas (usa .navbar-dropdown como base) */
+.navbar-dropdown.language-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background-color: #1e1e1e;
+  border: 1px solid #383838;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  padding: 6px;
+  min-width: 170px;
+  z-index: 1000;
+}
+
+/* Opciones individuales en el dropdown de idiomas */
+.language-dropdown-menu .language-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* Asegurar que ocupe todo el ancho del dropdown */
+  text-align: left;
+  padding: 9px 14px;
+  font-size: 0.85em;
+  text-transform: none;
+  color: #d0d0d0;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  border: none; /* Sin borde por defecto */
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: antialiased;
+}
+.language-dropdown-menu .language-option:last-child {
+  margin-bottom: 0;
+}
+
+.language-dropdown-menu .language-option > span:first-child {
+  /* Texto del idioma */
+  text-shadow: none;
+  background-color: transparent;
+}
+
+.language-dropdown-menu .language-option:hover {
+  background-color: #2f2f2f;
+  color: #ffffff;
+}
+
+.language-dropdown-menu .language-option.is-active-lang {
+  color: #ffffff;
+  font-weight: 600;
+  background-color: #007aff;
+}
+.language-dropdown-menu .language-option.is-active-lang:hover {
+  background-color: #0073e6;
+}
+
+.language-dropdown-menu .language-option .active-lang-indicator {
+  font-size: 0.9em;
+  margin-left: 10px;
+  color: inherit;
+  text-shadow: none;
+  background-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- 7. BOTÓN DE HAMBURGUESA (TOGGLE) --- */
+.navbar-toggle {
+  display: none;
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+  margin-left: 15px;
+}
+.navbar-toggle .icon-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #ffffff;
+  margin: 4px 0;
+  border-radius: 1px;
+}
+
+/* --- 8. ESTILOS RESPONSIVOS (@media query) --- */
+@media (max-width: 992px) {
+  .navbar {
+    padding: 0 15px;
+  }
+
+  .navbar-menu {
+    order: 1;
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #000000;
+    border-top: 1px solid #333333;
+    padding-bottom: 0;
+  }
+  .navbar-menu.is-active {
+    display: flex;
+  }
+
+  .navbar-brand a {
+    margin-right: auto;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+  .navbar-toggle {
+    display: block;
+  }
+
+  .navbar-start,
+  .navbar-end {
+    flex-direction: column;
+    width: 100%;
+    align-items: flex-start;
+  }
+  .navbar-start {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .navbar-start .navbar-item,
+  .navbar-end .navbar-item,
+  .navbar-end button.navbar-link {
+    width: 100%;
+    text-align: left;
+    padding: 14px 15px;
+    border-bottom: 1px solid #222222;
+    margin-left: 0;
+    background-color: transparent;
+  }
+  /* Hover para items en móvil */
+  .navbar-start .navbar-item:hover,
+  .navbar-end .navbar-item:hover,
+  .navbar-end button.navbar-link:hover {
+    background-color: #1a1a1a;
+  }
+
+  .navbar-start .navbar-item:not(:first-child)::before {
+    display: none;
+  }
+
+  /* Quitar el último borde */
+  .navbar-start > .navbar-item:last-of-type,
+  .navbar-end > .navbar-item:last-of-type,
+  .navbar-end > .has-dropdown:last-of-type > button.navbar-link {
+    border-bottom: none;
+  }
+
+  /* Dropdown Horizontal de Categorías en Móvil */
+  .horizontal-categories-container {
+    position: static;
+    width: 100%;
+    background-color: #000000;
+    border-top: 1px solid #222222;
+    border-bottom: none;
+    box-shadow: none;
+    padding: 0;
+  }
+  .horizontal-categories-dropdown {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 0;
+    gap: 0;
+  }
+  .horizontal-category-item {
+    width: 100%;
+    text-align: left;
+    padding: 14px 15px 14px 30px;
+    border-bottom: 1px solid #222222;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-radius: 0;
+    background-color: transparent;
+    font-size: 0.9em;
+  }
+  .horizontal-category-item:last-child {
+    border-bottom: none;
+  }
+  .horizontal-category-item:hover {
+    background-color: #1a1a1a;
+  }
+  .horizontal-categories-dropdown .loading-item,
+  .horizontal-categories-dropdown .error-item,
+  .horizontal-categories-dropdown .no-categories-item {
+    padding: 14px 15px 14px 30px;
+    border-bottom: 1px solid #222222;
+  }
+  .horizontal-categories-dropdown .loading-item:last-child,
+  .horizontal-categories-dropdown .error-item:last-child,
+  .horizontal-categories-dropdown .no-categories-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Selector de Idioma en Móvil */
+  .language-selector-button {
+    justify-content: space-between !important; /* Asegurar alineación del chevron */
+    background-color: transparent !important;
+    /* Hereda width, text-align, padding, border-bottom de .navbar-end button.navbar-link */
+  }
+  /* Asegurar que el borde inferior se quite si es el último elemento */
+  .navbar-end > .has-dropdown:last-of-type > .language-selector-button {
+    border-bottom: none;
+  }
+
+  .language-selector-button .language-icon {
+    filter: none;
+    opacity: 1;
+  }
+
+  .navbar-dropdown.language-dropdown-menu {
+    position: static;
+    width: 100%;
+    background-color: #121212;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    padding: 0;
+  }
+  .language-dropdown-menu .language-option {
+    padding: 14px 15px 14px 30px;
+    border-radius: 0;
+    margin: 0;
+    border-bottom: 1px solid #282828;
+    color: #b0b0b0;
+    background-color: transparent;
+  }
+  .language-dropdown-menu .language-option:last-child {
+    border-bottom: none;
+  }
+  .language-dropdown-menu .language-option:hover {
+    background-color: #252525;
+  }
+  .language-dropdown-menu .language-option.is-active-lang {
+    background-color: #2a2a2a;
+    color: #ffffff;
+    font-weight: 500;
+  }
+}
