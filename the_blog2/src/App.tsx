@@ -1,33 +1,23 @@
+// src/App.tsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // <--- IMPORTANTE
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./widgets/Navbar";
 import EntradasNuevas from "./widgets/EntradasNuevas";
+import EntradaDetalle from "./widgets/EntradaDetalle"; // <--- 1. IMPORTA EL COMPONENTE
 
 function App() {
   return (
     <Router>
-      {" "}
-      {}
       <div className="App">
-        <Navbar /> {}
+        <Navbar />
         <main>
           <Routes>
-            {" "}
-            {/* <--- 2. Define el área donde tus rutas cambiarán */}
-            {/* 3. Define una ruta para tu componente de entradas */}
-            {/* Ajusta la ruta "/blog" a lo que prefieras */}
             <Route path="/" element={<EntradasNuevas />} />
-            {/* Si tienes una página de inicio diferente, podrías tener algo como:
-              <Route path="/" element={<PaginaDeInicio />} />
-            */}
-            {/* Y una ruta para ver una entrada individual (el :slug es un parámetro):
-              Necesitarás un componente para mostrar la entrada individual, por ejemplo "EntradaDetalle"
-              <Route path="/blog/:slug" element={<EntradaDetalle />} /> 
-            */}
-            {/* Puedes agregar más rutas aquí */}
+            {/* 2. AÑADE LA RUTA PARA ENTRADA DETALLE */}
+            <Route path="/blog/:slug" element={<EntradaDetalle />} />
+            {/* Puedes cambiar "/blog/:slug" a la ruta que prefieras, ej. "/entradas/:slug" */}
           </Routes>
         </main>
-        {/* Aquí podrías tener un Footer, etc. */}
       </div>
     </Router>
   );

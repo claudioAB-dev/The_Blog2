@@ -1,0 +1,280 @@
+/* src/widgets/ContactModal.css */
+
+/* --- Variables (asumiendo que están definidas globalmente o en un CSS importado antes) --- */
+/* :root {
+  --cab-background-color: #000000;
+  --cab-card-background: #1c1c1c;
+  --cab-sidebar-background: #1a1a1a;
+  --cab-text-color-primary: #e0e0e0;
+  --cab-text-color-secondary: #b0b0b0;
+  --cab-text-color-brand: #ffffff;
+  --cab-accent-color: #00e0c6;
+  --cab-link-hover-color: #ffffff;
+  --cab-font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
+} */
+
+/* --- Overlay del Modal --- */
+.contact-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Fondo oscuro semitransparente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050; /* Asegurar que esté por encima de otros contenidos */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.contact-modal-overlay[aria-modal="true"] {
+  /* Estilo cuando está abierto */
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+}
+
+/* --- Contenido del Modal --- */
+.contact-modal-content {
+  background-color: var(--cab-card-background); /* Fondo oscuro para el modal */
+  padding: 30px 35px;
+  border-radius: 12px; /* Bordes más redondeados para un look moderno */
+  width: 90%;
+  max-width: 550px; /* Ancho máximo del modal */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.contact-modal-overlay[aria-modal="true"] .contact-modal-content {
+  transform: scale(1);
+}
+
+/* --- Botón de Cerrar --- */
+.contact-modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: var(--cab-text-color-secondary);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-modal-close-btn:hover {
+  color: var(--cab-accent-color);
+  transform: rotate(90deg);
+}
+
+/* --- Título del Modal --- */
+.contact-modal-content h2 {
+  font-family: var(--cab-font-primary);
+  color: var(--cab-text-color-brand);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 25px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* --- Grupos de Formulario y Etiquetas --- */
+.form-group {
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--cab-text-color-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* --- Inputs y Textarea --- */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+  width: 100%;
+  background-color: transparent; /* Sin fondo visible inicialmente */
+  color: var(--cab-text-color-primary);
+  padding: 12px 0; /* Padding solo vertical para efecto de línea inferior */
+  border: none;
+  border-bottom: 2px solid #444; /* Línea inferior sutil */
+  font-size: 1rem;
+  font-family: var(--cab-font-primary);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none; /* Quitar outline por defecto */
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group input[type="email"]::placeholder,
+.form-group textarea::placeholder {
+  color: #555; /* Placeholder más oscuro */
+  opacity: 1;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group textarea:focus {
+  border-bottom-color: var(
+    --cab-accent-color
+  ); /* Línea inferior se vuelve color acento */
+  box-shadow: 0 2px 0 0 var(--cab-accent-color, #00e0c6); /* Sombra sutil inferior con el color de acento */
+}
+
+.form-group textarea {
+  resize: vertical; /* Permitir redimensionar solo verticalmente */
+  min-height: 100px;
+}
+
+/* --- Botón de Enviar --- */
+.contact-modal-submit-btn {
+  display: block;
+  width: 100%;
+  background-color: var(--cab-accent-color);
+  color: #000000; /* Texto oscuro para contraste con el acento */
+  border: none;
+  padding: 14px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease,
+    box-shadow 0.3s ease;
+  margin-top: 15px;
+}
+
+.contact-modal-submit-btn:hover:not(:disabled) {
+  background-color: var(
+    --cab-link-hover-color
+  ); /* Cambio a blanco al hacer hover */
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(var(--cab-accent-color, 0, 224, 198), 0.3);
+}
+
+.contact-modal-submit-btn:disabled {
+  background-color: #555;
+  color: #888;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* --- Mensajes de Estado (Error/Éxito) --- */
+.contact-modal-message {
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.contact-modal-message.success {
+  background-color: rgba(0, 224, 198, 0.15); /* Fondo sutil de acento */
+  color: var(--cab-accent-color);
+  border: 1px solid var(--cab-accent-color);
+}
+
+.contact-modal-message.error,
+.error-text {
+  background-color: rgba(255, 70, 70, 0.1);
+  color: #ff6b6b; /* Rojo para errores */
+  border: 1px solid #ff6b6b;
+}
+
+.error-text {
+  /* Para errores de validación de campos individuales */
+  font-size: 0.75rem;
+  margin-top: 6px;
+  padding: 6px 8px;
+  background-color: transparent; /* Quitar fondo si es solo texto debajo del input */
+  border: none;
+  text-align: left;
+}
+
+/* --- Accesibilidad --- */
+.form-group input[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"] {
+  border-bottom-color: #ff6b6b; /* Rojo para errores */
+  box-shadow: 0 2px 0 0 #ff6b6b;
+}
+
+.form-group input[aria-invalid="true"]:focus,
+.form-group textarea[aria-invalid="true"]:focus {
+  border-bottom-color: #ff6b6b;
+  box-shadow: 0 2px 0 0 #ff6b6b; /* Mantener sombra de error en focus */
+}
+
+/* --- Opcional: Animación para el overlay y modal --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.contact-modal-overlay[aria-modal="true"] {
+  animation: fadeIn 0.3s forwards;
+}
+
+.contact-modal-overlay[aria-modal="true"] .contact-modal-content {
+  animation: scaleUp 0.3s 0.1s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Pequeño delay y cubic-bezier para efecto rebote */
+}
+
+/* --- Responsividad --- */
+@media (max-width: 600px) {
+  .contact-modal-content {
+    padding: 25px 20px;
+    width: 95%;
+    margin-top: 20px; /* Espacio si el teclado virtual aparece */
+    margin-bottom: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .contact-modal-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group textarea {
+    font-size: 0.9rem;
+    padding: 10px 0;
+  }
+
+  .contact-modal-submit-btn {
+    padding: 12px 15px;
+    font-size: 0.9rem;
+  }
+}

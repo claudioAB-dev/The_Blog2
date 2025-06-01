@@ -1,0 +1,267 @@
+/* src/widgets/EntradaDetalle.css */
+
+/* --- Variables y Estilos Base (heredados o inspirados de Entradas.css) --- */
+:root {
+  /* Estas son las variables que ya tienes definidas en Entradas.css */
+  /* No es necesario re-declararlas aquí si EntradaDetalle.css se carga después 
+       o si las variables están en un :root global en index.css, 
+       pero las incluyo comentadas para referencia de diseño. */
+  /* --cab-background-color: #000000;
+    --cab-text-color-primary: #e0e0e0;
+    --cab-text-color-secondary: #b0b0b0;
+    --cab-accent-color: #00e0c6;
+    --cab-link-hover-color: #ffffff;
+    --cab-font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --cab-font-secondary: "Georgia", serif;
+    --cab-main-content-max-width: 1200px;
+    --cab-card-background: #1c1c1c; 
+    */
+}
+
+/* --- Contenedor Principal del Detalle de Entrada --- */
+.entrada-detalle-container {
+  font-family: var(--cab-font-primary);
+  color: var(--cab-text-color-primary);
+  background-color: var(
+    --cab-background-color
+  ); /* Fondo principal de la página */
+  padding: 20px 15px; /* Similar al padding de cab-main-content en móviles */
+  max-width: var(--cab-main-content-max-width); /* Ancho máximo del contenido */
+  margin: 0 auto; /* Centrar el contenedor */
+  line-height: 1.7; /* Mejor legibilidad para texto largo */
+}
+
+/* --- Artículo y Cabecera --- */
+.entrada-detalle-contenido {
+  background-color: var(
+    --cab-card-background
+  ); /* Un fondo ligeramente distinto para el contenido del post, o var(--cab-background-color) si prefieres que se funda */
+  padding: 25px 30px;
+  border-radius: 8px; /* Bordes redondeados sutiles */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Sombra sutil */
+}
+
+.entrada-detalle-header {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #333333; /* Separador sutil */
+  padding-bottom: 20px;
+}
+
+.entrada-detalle-titulo {
+  font-family: var(
+    --cab-font-secondary
+  ); /* O var(--cab-font-primary) si prefieres consistencia con otros títulos */
+  font-size: 2.8rem; /* Tamaño prominente para el título */
+  font-weight: bold;
+  color: var(--cab-text-color-brand); /* Color de marca para el título */
+  margin: 0 0 15px 0;
+  line-height: 1.2;
+}
+
+/* --- Imagen Destacada --- */
+.entrada-detalle-imagen {
+  width: 100%;
+  max-height: 450px; /* Altura máxima para la imagen destacada */
+  object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+  border-radius: 6px; /* Bordes redondeados para la imagen */
+  margin-bottom: 25px;
+  border: 1px solid #2a2a2a; /* Borde sutil si la imagen tiene fondo claro */
+}
+
+/* --- Metadatos --- */
+.entrada-detalle-meta {
+  font-size: 0.85rem;
+  color: var(--cab-text-color-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; /* Espacio entre ítems de metadatos */
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.meta-label {
+  font-weight: 600;
+  color: var(--cab-text-color-primary);
+  margin-right: 6px;
+}
+
+.meta-item time {
+  font-style: italic;
+}
+
+/* --- Cuerpo del Contenido --- */
+.entrada-detalle-cuerpo {
+  font-size: 1rem; /* Tamaño de fuente base para el contenido */
+  color: var(--cab-text-color-primary);
+}
+
+.entrada-detalle-cuerpo p {
+  margin-bottom: 1.5em;
+}
+
+.entrada-detalle-cuerpo h1,
+.entrada-detalle-cuerpo h2,
+.entrada-detalle-cuerpo h3,
+.entrada-detalle-cuerpo h4,
+.entrada-detalle-cuerpo h5,
+.entrada-detalle-cuerpo h6 {
+  font-family: var(--cab-font-secondary);
+  color: var(--cab-text-color-brand);
+  margin-top: 2em;
+  margin-bottom: 1em;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.entrada-detalle-cuerpo h1 {
+  font-size: 2.2rem;
+}
+.entrada-detalle-cuerpo h2 {
+  font-size: 1.8rem;
+}
+.entrada-detalle-cuerpo h3 {
+  font-size: 1.5rem;
+}
+.entrada-detalle-cuerpo h4 {
+  font-size: 1.2rem;
+}
+
+.entrada-detalle-cuerpo a {
+  color: var(--cab-accent-color);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--cab-accent-color);
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+.entrada-detalle-cuerpo a:hover {
+  color: var(--cab-link-hover-color);
+  border-bottom-color: var(--cab-link-hover-color);
+}
+
+.entrada-detalle-cuerpo ul,
+.entrada-detalle-cuerpo ol {
+  margin-bottom: 1.5em;
+  padding-left: 25px; /* Indentación para listas */
+}
+
+.entrada-detalle-cuerpo li {
+  margin-bottom: 0.5em;
+}
+
+.entrada-detalle-cuerpo blockquote {
+  border-left: 3px solid var(--cab-accent-color);
+  margin: 1.5em 0;
+  padding: 0.5em 15px;
+  color: var(--cab-text-color-secondary);
+  font-style: italic;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.03
+  ); /* Fondo sutil para blockquotes */
+}
+
+.entrada-detalle-cuerpo pre {
+  background-color: #1e1e1e; /* Fondo para bloques de código */
+  color: #d4d4d4; /* Color de texto para código */
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto; /* Scroll horizontal para código largo */
+  margin-bottom: 1.5em;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+    monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.entrada-detalle-cuerpo code {
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+    monospace;
+  font-size: 0.9em;
+}
+
+.entrada-detalle-cuerpo pre code {
+  background-color: transparent; /* Evitar doble fondo */
+  padding: 0;
+}
+
+.entrada-detalle-cuerpo img {
+  /* Estilos para imágenes dentro del contenido */
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 1em 0;
+  display: block; /* Para centrar con margin auto si es necesario */
+  border: 1px solid #2a2a2a;
+}
+
+/* --- Mensajes de Estado (Carga, Error, No Encontrado) --- */
+.entrada-detalle-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px; /* Altura mínima para estos mensajes */
+  font-size: 1.2rem;
+  color: var(--cab-text-color-secondary);
+  text-align: center;
+  padding: 20px;
+}
+
+.entrada-detalle-error {
+  color: #ff6b6b; /* Un color de error distintivo */
+}
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 992px) {
+  .entrada-detalle-container {
+    padding: 20px 10px;
+  }
+  .entrada-detalle-contenido {
+    padding: 20px;
+  }
+  .entrada-detalle-titulo {
+    font-size: 2.2rem;
+  }
+  .entrada-detalle-cuerpo h1 {
+    font-size: 1.9rem;
+  }
+  .entrada-detalle-cuerpo h2 {
+    font-size: 1.6rem;
+  }
+  .entrada-detalle-cuerpo h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .entrada-detalle-titulo {
+    font-size: 1.8rem;
+  }
+  .entrada-detalle-contenido {
+    padding: 15px;
+    border-radius: 0; /* Podrías quitar el radio en móvil para que ocupe todo el ancho */
+  }
+  .entrada-detalle-meta {
+    font-size: 0.8rem;
+    gap: 10px;
+  }
+  .entrada-detalle-cuerpo {
+    font-size: 0.95rem;
+  }
+  .entrada-detalle-cuerpo h1 {
+    font-size: 1.7rem;
+  }
+  .entrada-detalle-cuerpo h2 {
+    font-size: 1.4rem;
+  }
+  .entrada-detalle-cuerpo h3 {
+    font-size: 1.2rem;
+  }
+}

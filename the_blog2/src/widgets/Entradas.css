@@ -76,7 +76,7 @@ ul {
 .cab-brand-title {
   font-family: var(--cab-font-brand);
   color: var(--cab-text-color-brand);
-  font-size: 40px;
+  font-size: 50px;
   font-weight: bold;
   text-transform: uppercase;
   writing-mode: vertical-rl;

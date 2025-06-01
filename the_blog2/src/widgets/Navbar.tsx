@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Navbar.css";
 import { useLanguage } from "../features/LanguageContext";
 import type { LanguageCode } from "../features/LanguageContext";
+import ContactModal from "./ContactModal";
 
 // ... (tus interfaces y funciones de traducción se mantienen igual)
 interface Category {
@@ -63,6 +64,7 @@ const Navbar = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] =
     useState<boolean>(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false); // NUEVO ESTADO
 
   const navbarRef = useRef<HTMLElement>(null);
 
@@ -181,6 +183,17 @@ const Navbar = () => {
     </>
   );
 
+  const handleContactClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault(); // Previene la navegación si es un <a> con href
+    setIsContactModalOpen(true);
+    if (isNavMenuExpanded) {
+      // Opcional: cerrar el menú principal si está abierto
+      setIsNavMenuExpanded(false);
+      setIsCategoriesDropdownOpen(false);
+      setIsLanguageDropdownOpen(false);
+    }
+  };
+
   return (
     <nav className="navbar" ref={navbarRef}>
       {/* El brand ahora es un hermano directo */}
@@ -242,9 +255,10 @@ const Navbar = () => {
           </div>
 
           <a
-            href="/contact"
+            href="#" // O puedes usar un <button> en su lugar
             className="navbar-item"
-            onClick={handleSimpleLinkClick}
+            onClick={handleContactClick} // Usa la nueva función
+            role="button" // Si usas <a> como botón, es bueno para accesibilidad
           >
             {getStaticLabel("contact", currentLanguage)}
           </a>
@@ -324,6 +338,10 @@ const Navbar = () => {
           </div>
         </div>
       )}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
     </nav>
   );
 };
