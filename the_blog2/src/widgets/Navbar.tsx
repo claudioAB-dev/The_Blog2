@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+// Navbar.tsx
+
+import React, { useState, useEffect, useRef } from "react";
 import "./Navbar.css";
 import { useLanguage } from "../features/LanguageContext";
 import type { LanguageCode } from "../features/LanguageContext";
 
-// Some logos heare
-
-// translation
+// ... (tus interfaces y funciones de traducción se mantienen igual)
 interface Category {
   id: number;
   nombre_es: string;
@@ -27,7 +27,7 @@ const getCategoryNameByLanguage = (
     case "DE":
       return category.nombre_de;
     default:
-      return category.nombre_en; // Default to English if language is not recognized
+      return category.nombre_en;
   }
 };
 
@@ -35,36 +35,11 @@ const staticTranslations: Record<
   string,
   Partial<Record<LanguageCode, string>>
 > = {
-  portfolio: {
-    EN: "Portfolio",
-    ES: "Portafolio",
-    DE: "Portfolio",
-  },
-  contact: {
-    EN: "Contact",
-    ES: "Contacto",
-    DE: "Kontakt",
-  },
-  brand: {
-    EN: "CLAUDIO A. DEV",
-    ES: "CLAUDIO A. DEV",
-    DE: "CLAUDIO A. DEV",
-  },
-  more: {
-    EN: "More",
-    ES: "Más",
-    DE: "Mehr",
-  },
-  categories: {
-    EN: "Categories",
-    ES: "Categorías",
-    DE: "Kategorien",
-  },
-  loading: {
-    EN: "Loading...",
-    ES: "Cargando...",
-    DE: "Laden...",
-  },
+  portfolio: { EN: "Portfolio", ES: "Portafolio", DE: "Portfolio" },
+  contact: { EN: "Contact", ES: "Contacto", DE: "Kontakt" },
+  brand: { EN: "CLAUDIO A. DEV", ES: "CLAUDIO A. DEV", DE: "CLAUDIO A. DEV" },
+  categories: { EN: "Categories", ES: "Categorías", DE: "Kategorien" },
+  loading: { EN: "Loading...", ES: "Cargando...", DE: "Laden..." },
   errorLoading: {
     EN: "Error loading data:",
     ES: "Error al cargar datos:",
@@ -89,8 +64,8 @@ const Navbar = () => {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] =
     useState<boolean>(false);
 
-  // (useEffect para fetchData permanece igual)
-  // ...
+  const navbarRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     const urlApi = "http://127.0.0.1:5000/categorias";
     const fetchData = async (): Promise<void> => {
@@ -115,23 +90,45 @@ const Navbar = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isNavMenuExpanded &&
+        navbarRef.current &&
+        !navbarRef.current.contains(event.target as Node)
+      ) {
+        setIsNavMenuExpanded(false);
+        setIsCategoriesDropdownOpen(false);
+        setIsLanguageDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isNavMenuExpanded]);
+
   const toggleCategoriesDropdown = () => {
-    setIsCategoriesDropdownOpen(!isCategoriesDropdownOpen);
-    if (!isCategoriesDropdownOpen && isLanguageDropdownOpen)
+    const newCategoriesOpenState = !isCategoriesDropdownOpen;
+    setIsCategoriesDropdownOpen(newCategoriesOpenState);
+    if (newCategoriesOpenState && isLanguageDropdownOpen) {
       setIsLanguageDropdownOpen(false);
+    }
   };
 
   const toggleLanguageDropdown = () => {
-    setIsLanguageDropdownOpen(!isLanguageDropdownOpen);
-    if (!isLanguageDropdownOpen && isCategoriesDropdownOpen)
+    const newLanguageOpenState = !isLanguageDropdownOpen;
+    setIsLanguageDropdownOpen(newLanguageOpenState);
+    if (newLanguageOpenState && isCategoriesDropdownOpen) {
       setIsCategoriesDropdownOpen(false);
+    }
   };
 
   const handleLanguageChange = (langCode: LanguageCode) => {
     setCurrentLanguage(langCode);
-    setIsNavMenuExpanded(false); // Cierra el menú móvil si está abierto
-    setIsCategoriesDropdownOpen(false); // Cierra otros dropdowns
-    setIsLanguageDropdownOpen(false); // Cierra este dropdown
+    setIsLanguageDropdownOpen(false);
+    // No cerramos el menú principal aquí, el usuario podría querer seguir en el menú
   };
 
   const handleNavMenuToggle = () => {
@@ -143,58 +140,116 @@ const Navbar = () => {
     }
   };
 
-  const handleCategoryItemClick = () => {
-    setIsCategoriesDropdownOpen(false);
+  const handleSimpleLinkClick = () => {
     if (isNavMenuExpanded) {
       setIsNavMenuExpanded(false);
     }
   };
 
+  const handleCategoryItemClick = () => {
+    setIsCategoriesDropdownOpen(false); // Solo cierra el dropdown de categorías
+    // Opcionalmente, puedes cerrar el menú principal si es necesario para tu UX en móvil:
+    // if (window.innerWidth <= 992) setIsNavMenuExpanded(false);
+  };
+
+  const renderCategoriesDropdownContent = () => (
+    <>
+      {charging && (
+        <p className="loading-item">
+          {getStaticLabel("loading", currentLanguage)}
+        </p>
+      )}
+      {error && (
+        <p className="error-item">
+          {getStaticLabel("errorLoading", currentLanguage)} {error}
+        </p>
+      )}
+      {data &&
+        data.map((category) => (
+          <a
+            key={category.id}
+            href={`/category/${category.slug}`}
+            className="horizontal-category-item" // Esta clase será estilizada diferentemente en móvil
+            onClick={handleCategoryItemClick}
+          >
+            {getCategoryNameByLanguage(category, currentLanguage)}
+          </a>
+        ))}
+      {!charging && !error && data && data.length === 0 && (
+        <p className="no-categories-item">No hay categorías disponibles.</p>
+      )}
+    </>
+  );
+
   return (
-    <nav className="navbar">
+    <nav className="navbar" ref={navbarRef}>
+      {/* El brand ahora es un hermano directo */}
       <div className="navbar-brand">
         <a href="/">{getStaticLabel("brand", currentLanguage)}</a>
-        <button
-          className="navbar-toggle"
-          onClick={handleNavMenuToggle}
-          aria-expanded={isNavMenuExpanded}
-          aria-label="Toggle navigation"
-        >
-          <span className="icon-bar"></span>
-          <span className="icon-bar"></span>
-          <span className="icon-bar"></span>
-        </button>
       </div>
 
-      <div className={`navbar-menu ${isNavMenuExpanded ? "is-active" : ""}`}>
+      {/* El toggle ahora es un hermano directo, fuera del brand */}
+      <button
+        className="navbar-toggle"
+        onClick={handleNavMenuToggle}
+        aria-expanded={isNavMenuExpanded}
+        aria-label="Toggle navigation"
+        aria-controls="navbarMenuContent"
+      >
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+        <span className="icon-bar"></span>
+      </button>
+
+      {/* El menú principal también es un hermano directo */}
+      <div
+        id="navbarMenuContent"
+        className={`navbar-menu ${isNavMenuExpanded ? "is-active" : ""}`}
+      >
         <div className="navbar-start">
-          <a href="/portfolio" className="navbar-item">
+          <a
+            href="/portfolio"
+            className="navbar-item"
+            onClick={handleSimpleLinkClick}
+          >
             {getStaticLabel("portfolio", currentLanguage)}
           </a>
         </div>
 
         <div className="navbar-end">
-          <div className="navbar-item has-dropdown">
+          <div className="navbar-item has-dropdown has-dropdown-categories">
             <button
               onClick={toggleCategoriesDropdown}
-              className={`navbar-link ${
+              className={`navbar-link categories-toggle-button ${
                 isCategoriesDropdownOpen ? "is-active-dropdown-button" : ""
               }`}
               aria-haspopup="true"
               aria-expanded={isCategoriesDropdownOpen}
+              aria-controls="categoriesDropdownMobile"
             >
               {getStaticLabel("categories", currentLanguage)}
+              <span className="dropdown-chevron"></span>
+              <span className="mobile-dropdown-chevron"></span>
             </button>
+            {isNavMenuExpanded && isCategoriesDropdownOpen && (
+              <div
+                id="categoriesDropdownMobile"
+                className="categories-dropdown-mobile"
+              >
+                {renderCategoriesDropdownContent()}
+              </div>
+            )}
           </div>
 
-          <a href="/contact" className="navbar-item">
+          <a
+            href="/contact"
+            className="navbar-item"
+            onClick={handleSimpleLinkClick}
+          >
             {getStaticLabel("contact", currentLanguage)}
           </a>
 
-          {/* Menú desplegable de idiomas modificado */}
-          <div className="navbar-item has-dropdown">
-            {" "}
-            {/* Contenedor existente */}
+          <div className="navbar-item has-dropdown has-dropdown-language">
             <button
               onClick={toggleLanguageDropdown}
               className={`navbar-link language-selector-button ${
@@ -202,6 +257,7 @@ const Navbar = () => {
               }`}
               aria-haspopup="true"
               aria-expanded={isLanguageDropdownOpen}
+              aria-controls="languageDropdownMenuContent"
             >
               <span
                 className="language-icon"
@@ -211,13 +267,18 @@ const Navbar = () => {
                 🌐
               </span>
               <span className="current-lang-text">{currentLanguage}</span>
-              <span className="dropdown-chevron"></span>{" "}
-              {/* Estilizado por CSS */}
+              <span className="dropdown-chevron"></span>
+              <span className="mobile-dropdown-chevron"></span>
             </button>
             {isLanguageDropdownOpen && (
-              <div className="navbar-dropdown is-right language-dropdown-menu">
+              <div
+                id="languageDropdownMenuContent"
+                className={`navbar-dropdown language-dropdown-menu ${
+                  !isNavMenuExpanded ? "is-right" : ""
+                }`}
+              >
                 <button
-                  className={`navbar-item language-option ${
+                  className={`language-option ${
                     currentLanguage === "ES" ? "is-active-lang" : ""
                   }`}
                   onClick={() => handleLanguageChange("ES")}
@@ -228,7 +289,7 @@ const Navbar = () => {
                   )}
                 </button>
                 <button
-                  className={`navbar-item language-option ${
+                  className={`language-option ${
                     currentLanguage === "EN" ? "is-active-lang" : ""
                   }`}
                   onClick={() => handleLanguageChange("EN")}
@@ -239,7 +300,7 @@ const Navbar = () => {
                   )}
                 </button>
                 <button
-                  className={`navbar-item language-option ${
+                  className={`language-option ${
                     currentLanguage === "DE" ? "is-active-lang" : ""
                   }`}
                   onClick={() => handleLanguageChange("DE")}
@@ -255,37 +316,11 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Contenedor para el dropdown horizontal de categorías (sin cambios aquí) */}
-      {isCategoriesDropdownOpen && (
-        // ... tu código del dropdown horizontal de categorías
+      {/* Dropdown de categorías HORIZONTAL para ESCRITORIO (fuera del menú principal) */}
+      {!isNavMenuExpanded && isCategoriesDropdownOpen && (
         <div className="horizontal-categories-container">
           <div className="horizontal-categories-dropdown">
-            {charging && (
-              <p className="loading-item">
-                {getStaticLabel("loading", currentLanguage)}
-              </p>
-            )}
-            {error && (
-              <p className="error-item">
-                {getStaticLabel("errorLoading", currentLanguage)} {error}
-              </p>
-            )}
-            {data &&
-              data.map((category) => (
-                <a
-                  key={category.id}
-                  href={`/category/${category.slug}`}
-                  className="horizontal-category-item"
-                  onClick={handleCategoryItemClick}
-                >
-                  {getCategoryNameByLanguage(category, currentLanguage)}
-                </a>
-              ))}
-            {!charging && !error && data && data.length === 0 && (
-              <p className="no-categories-item">
-                No hay categorías disponibles.
-              </p>
-            )}
+            {renderCategoriesDropdownContent()}
           </div>
         </div>
       )}

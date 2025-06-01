@@ -1,15 +1,13 @@
-/* Navbar.css */
-
 /* --- 1. CONFIGURACIÓN NAVBAR PRINCIPAL --- */
 .navbar {
-  background-color: #000000; /* Coincide con el * global, pero es bueno ser explícito */
   color: #ffffff;
-  padding: 0 30px;
+  padding: 0 15px; /* Padding móvil por defecto */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 70px;
-  position: relative;
+  justify-content: space-between; /* CLAVE: separa brand y toggle */
+  align-items: center; /* CLAVE: alinea verticalmente brand y toggle */
+  min-height: 60px; /* Altura móvil por defecto */
+  position: relative; /* Necesario para el z-index y posicionamiento absoluto del menú */
+  z-index: 1000; /* Navbar por encima del contenido general */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
@@ -18,19 +16,28 @@
 .navbar-brand a {
   color: #ffffff;
   text-decoration: none;
-  font-size: 1.6em;
+  font-size: 1.4em; /* Tamaño móvil por defecto */
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: -0.5px;
-  margin-right: 20px;
-  display: inline-block;
-  padding-bottom: 15px;
-  margin-bottom: -1px;
-  background-color: transparent; /* Para que no tome el * global */
+  display: inline-block; /* O block si prefieres */
+  background-color: transparent;
+  line-height: 1; /* Ayuda a la alineación vertical */
 }
 
-/* --- 3. NAVBAR MENU, START, END (ESTRUCTURA) --- */
-.navbar-menu {
+/* --- Desktop: Navbar Brand (se sobreescribe en media query) --- */
+/* Estos son los estilos que tenías para escritorio para brand, se activarán con min-width */
+.navbar-brand-desktop-styles a {
+  font-size: 1.6em;
+  padding-bottom: 15px;
+  margin-bottom: -1px;
+  margin-right: 20px; /* Si quieres espacio entre brand y el inicio del menú desktop */
+}
+
+/* --- 3. NAVBAR MENU, START, END (ESTRUCTURA BASE) --- */
+/* Estos son estilos de ESCRITORIO para el menú principal. En móvil, .navbar-menu será position:absolute */
+.navbar-menu:not(.is-active) {
+  /* Por defecto, el navbar-menu para desktop */
   display: flex;
   align-items: center;
   flex-grow: 1;
@@ -38,6 +45,7 @@
 }
 
 .navbar-start {
+  /* Estilos desktop */
   display: flex;
   align-items: center;
   padding-bottom: 15px;
@@ -46,11 +54,12 @@
 }
 
 .navbar-end {
+  /* Estilos desktop */
   display: flex;
   align-items: center;
 }
 
-/* --- 4. NAVBAR ITEMS (LINKS GENERALES, BOTONES) --- */
+/* --- 4. NAVBAR ITEMS ESCRITORIO --- */
 .navbar-start .navbar-item {
   color: #ffffff;
   text-decoration: none;
@@ -62,17 +71,14 @@
   position: relative;
   background-color: transparent;
 }
-
 .navbar-start .navbar-item:not(:first-child)::before {
   content: "/";
   color: #777777;
   margin-right: 24px;
   font-weight: 300;
 }
-
 .navbar-start .navbar-item:hover {
   color: #bbbbbb;
-  background-color: transparent; /* Hover no cambia fondo aquí */
 }
 
 .navbar-end .navbar-item,
@@ -93,46 +99,34 @@
   align-items: center;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
-
 .navbar-end .navbar-item:hover,
 .navbar-end button.navbar-link:hover {
-  color: #ffffff;
   background-color: #1c1c1c;
 }
-
 .navbar-end button.navbar-link.is-active-dropdown-button {
+  /* Categorías activo en escritorio */
   background-color: #1c1c1c;
-  color: #ffffff;
 }
-
 .navbar-end .navbar-item.has-dropdown {
   position: relative;
-  background-color: transparent;
 }
 
-.navbar-end .navbar-item.has-dropdown:first-child > button.navbar-link::after {
-  content: " +";
-  font-weight: 300;
-  margin-left: 4px;
-  background-color: transparent;
-}
-
-/* --- 5. DROPDOWN HORIZONTAL DE CATEGORÍAS --- */
+/* --- 5. DROPDOWN HORIZONTAL DE CATEGORÍAS (SOLO ESCRITORIO) --- */
 .horizontal-categories-container {
+  /* Estilos se mantienen, pero asegurar que no se muestre en móvil */
+  display: none; /* Oculto por defecto, se mostrará en JS/CSS para escritorio */
   position: absolute;
-  top: 70px;
+  top: 70px; /* Ajustar a la altura del navbar de escritorio */
   left: 0;
   right: 0;
   background-color: #050505;
   border-top: 1px solid #282828;
   border-bottom: 1px solid #282828;
-  z-index: 998; /* Ligeramente debajo de dropdowns de items de navbar-end */
+  z-index: 998;
   padding: 15px 0;
-  display: flex;
   justify-content: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-
 .horizontal-categories-dropdown {
   display: flex;
   flex-wrap: wrap;
@@ -141,10 +135,9 @@
   gap: 10px 20px;
   max-width: 1100px;
   padding: 0 20px;
-  background-color: transparent;
 }
-
 .horizontal-category-item {
+  /* Estilo base, se adaptará/sobreescribirá en móvil */
   color: #b0b0b0;
   text-decoration: none;
   padding: 8px 15px;
@@ -152,18 +145,16 @@
   font-size: 0.85em;
   font-weight: 500;
   text-transform: uppercase;
-  background-color: #000000;
+  background-color: #000000; /* MANTENIDO: Específicamente negro sobre el fondo #050505 del contenedor */
   border: 1px solid #333333;
   transition: color 0.2s ease, background-color 0.2s ease,
     border-color 0.2s ease;
 }
-
 .horizontal-category-item:hover {
   color: #ffffff;
   background-color: #181818;
   border-color: #444444;
 }
-
 .horizontal-categories-dropdown .loading-item,
 .horizontal-categories-dropdown .error-item,
 .horizontal-categories-dropdown .no-categories-item {
@@ -173,41 +164,36 @@
   font-size: 0.85em;
   width: 100%;
   text-align: center;
-  background-color: transparent;
 }
 
-/* --- 6. SELECTOR DE IDIOMAS MODERNIZADO --- */
+/* --- 6. SELECTOR DE IDIOMAS ESCRITORIO --- */
 .language-selector-button {
+  /* Estilos base/escritorio */
   gap: 7px;
-  padding: 8px 10px !important; /* !important para sobreescribir padding de .navbar-link si es necesario */
+  padding: 8px 10px !important; /* Usar con precaución !important */
   border-radius: 6px;
-  background-color: #222222 !important; /* Fondo específico, !important si es necesario */
+  background-color: #222222 !important;
   color: #e0e0e0 !important;
 }
-
 .language-selector-button:hover {
   background-color: #333333 !important;
   color: #ffffff !important;
 }
-
 .language-selector-button.is-open {
+  /* Escritorio: Idioma activo */
   background-color: #333333 !important;
 }
-
 .language-selector-button .language-icon {
   font-size: 1.2em;
   line-height: 1;
   filter: grayscale(30%) opacity(80%);
-  background-color: transparent;
 }
-
 .language-selector-button .current-lang-text {
   font-size: 0.9em;
   font-weight: 500;
-  background-color: transparent;
 }
-
 .language-selector-button .dropdown-chevron {
+  /* Chevron de ESCRITORIO */
   width: 0;
   height: 0;
   border-left: 4px solid transparent;
@@ -216,15 +202,13 @@
   transition: transform 0.3s ease;
   margin-left: 3px;
   opacity: 0.7;
-  background-color: transparent;
 }
-
 .language-selector-button.is-open .dropdown-chevron {
   transform: rotate(180deg);
 }
 
-/* Menú desplegable de idiomas (usa .navbar-dropdown como base) */
 .navbar-dropdown.language-dropdown-menu {
+  /* Base para dropdown de idioma ESCRITORIO */
   position: absolute;
   top: calc(100% + 6px);
   right: 0;
@@ -234,15 +218,14 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   padding: 6px;
   min-width: 170px;
-  z-index: 1000;
+  z-index: 999; /* Encima de cat. horizontal */
 }
-
-/* Opciones individuales en el dropdown de idiomas */
 .language-dropdown-menu .language-option {
+  /* Escritorio */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* Asegurar que ocupe todo el ancho del dropdown */
+  width: 100%;
   text-align: left;
   padding: 9px 14px;
   font-size: 0.85em;
@@ -250,29 +233,18 @@
   color: #d0d0d0;
   border-radius: 5px;
   margin-bottom: 4px;
-  border: none; /* Sin borde por defecto */
+  border: none;
   background-color: transparent;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-smooth: antialiased;
 }
 .language-dropdown-menu .language-option:last-child {
   margin-bottom: 0;
 }
-
-.language-dropdown-menu .language-option > span:first-child {
-  /* Texto del idioma */
-  text-shadow: none;
-  background-color: transparent;
-}
-
 .language-dropdown-menu .language-option:hover {
   background-color: #2f2f2f;
   color: #ffffff;
 }
-
 .language-dropdown-menu .language-option.is-active-lang {
   color: #ffffff;
   font-weight: 600;
@@ -281,26 +253,21 @@
 .language-dropdown-menu .language-option.is-active-lang:hover {
   background-color: #0073e6;
 }
-
 .language-dropdown-menu .language-option .active-lang-indicator {
   font-size: 0.9em;
   margin-left: 10px;
   color: inherit;
-  text-shadow: none;
-  background-color: transparent;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 /* --- 7. BOTÓN DE HAMBURGUESA (TOGGLE) --- */
 .navbar-toggle {
-  display: none;
+  display: none; /* Oculto por defecto, se muestra en @media para móvil */
   background-color: transparent;
   border: none;
   color: white;
   cursor: pointer;
-  padding: 10px;
-  margin-left: 15px;
+  padding: 10px; /* Área táctil */
+  z-index: 1010; /* Por encima del menú desplegado */
 }
 .navbar-toggle .icon-bar {
   display: block;
@@ -309,168 +276,348 @@
   background-color: #ffffff;
   margin: 4px 0;
   border-radius: 1px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.navbar-toggle[aria-expanded="true"] .icon-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.navbar-toggle[aria-expanded="true"] .icon-bar:nth-child(2) {
+  opacity: 0;
+}
+.navbar-toggle[aria-expanded="true"] .icon-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
-/* --- 8. ESTILOS RESPONSIVOS (@media query) --- */
+/* --- Chevrons Móviles --- */
+.mobile-dropdown-chevron {
+  display: none; /* Oculto por defecto, se muestra en móvil por reglas específicas */
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+/* --- 8. ESTILOS RESPONSIVOS (@media query para MÓVIL) --- */
 @media (max-width: 992px) {
-  .navbar {
-    padding: 0 15px;
-  }
+  /* --- NAVBAR GENERAL MÓVIL --- */
+  /* .navbar { padding: 0 15px; min-height: 60px; } YA ESTÁ COMO BASE */
 
-  .navbar-menu {
-    order: 1;
-    display: none;
-    flex-direction: column;
-    width: 100%;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #000000;
-    border-top: 1px solid #333333;
-    padding-bottom: 0;
+  /* Ocultar menú de escritorio */
+  .navbar-menu:not(.is-active) {
+    /* El que no está activo (menú de escritorio en línea) */
+    display: none !important;
   }
-  .navbar-menu.is-active {
-    display: flex;
-  }
+  /* El .navbar-menu.is-active SÍ se mostrará */
 
-  .navbar-brand a {
-    margin-right: auto;
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
   .navbar-toggle {
-    display: block;
+    display: block; /* Muestra el botón de hamburguesa */
   }
 
-  .navbar-start,
-  .navbar-end {
+  /* --- MENÚ DESPLEGABLE MÓVIL --- */
+  .navbar-menu.is-active {
+    display: flex; /* Se activa para mostrar */
     flex-direction: column;
     width: 100%;
-    align-items: flex-start;
+    position: absolute; /* CLAVE para superposición */
+    top: 60px; /* Debajo del navbar (ajustar si la altura del navbar cambia) */
+    left: 0;
+    right: 0; /* Para ocupar todo el ancho */
+    background-color: #000000; /* MANTENIDO: Asegura que el overlay del menú móvil sea negro sólido */
+    border-top: 1px solid #333333;
+    padding-bottom: 0; /* Evitar padding extra en el contenedor */
+    max-height: calc(
+      100vh - 60px
+    ); /* Evita que el menú sea más alto que la pantalla */
+    overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+    z-index: 1005; /* Por encima del contenido de la página, debajo del toggle */
   }
-  .navbar-start {
-    border-bottom: none;
+
+  /* Estructura interna del menú móvil */
+  .navbar-menu.is-active .navbar-start,
+  .navbar-menu.is-active .navbar-end {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch; /* Los items ocuparán todo el ancho */
+    border-bottom: none; /* Reset de bordes de escritorio */
     padding-bottom: 0;
     margin-bottom: 0;
   }
+  .navbar-menu.is-active .navbar-start .navbar-item:not(:first-child)::before {
+    display: none; /* Oculta el separador "/" */
+  }
 
-  .navbar-start .navbar-item,
-  .navbar-end .navbar-item,
-  .navbar-end button.navbar-link {
+  /* --- ITEMS DEL MENÚ MÓVIL --- */
+  .navbar-menu.is-active .navbar-start > .navbar-item,
+  .navbar-menu.is-active .navbar-end > .navbar-item, /* Cubre 'Contacto' y los divs .has-dropdown */
+  .navbar-menu.is-active .navbar-end > .has-dropdown > button.navbar-link {
     width: 100%;
     text-align: left;
-    padding: 14px 15px;
+    padding: 16px 15px; /* Buen padding para tap targets */
     border-bottom: 1px solid #222222;
     margin-left: 0;
     background-color: transparent;
+    color: #ffffff;
+    display: flex; /* Para alinear texto y chevron */
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box; /* Padding no aumenta el width */
   }
-  /* Hover para items en móvil */
-  .navbar-start .navbar-item:hover,
-  .navbar-end .navbar-item:hover,
-  .navbar-end button.navbar-link:hover {
+
+  .navbar-menu.is-active .navbar-start > .navbar-item:hover,
+  .navbar-menu.is-active .navbar-end > .navbar-item:hover,
+  .navbar-menu.is-active
+    .navbar-end
+    > .has-dropdown
+    > button.navbar-link:hover {
     background-color: #1a1a1a;
   }
 
-  .navbar-start .navbar-item:not(:first-child)::before {
-    display: none;
+  /* Botón de dropdown activo en móvil */
+  .navbar-menu.is-active
+    .navbar-end
+    > .has-dropdown
+    > button.navbar-link[aria-expanded="true"] {
+    background-color: #101010; /* Ligeramente diferente al hover para indicar apertura */
   }
 
-  /* Quitar el último borde */
-  .navbar-start > .navbar-item:last-of-type,
-  .navbar-end > .navbar-item:last-of-type,
-  .navbar-end > .has-dropdown:last-of-type > button.navbar-link {
+  /* Quitar borde del último elemento del menú principal móvil */
+  .navbar-menu.is-active .navbar-end > *:last-child > button.navbar-link, /* Si es un dropdown */
+  .navbar-menu.is-active .navbar-end > .navbar-item:last-of-type:not(.has-dropdown) /* Si es un link simple */ {
+    border-bottom: none;
+  }
+  /* Si navbar-start es el único/último visible (menos común con navbar-end usualmente presente) */
+  .navbar-menu.is-active .navbar-start:last-child > .navbar-item:last-child {
     border-bottom: none;
   }
 
-  /* Dropdown Horizontal de Categorías en Móvil */
+  /* --- DROPDOWN DE CATEGORÍAS MÓVIL --- */
   .horizontal-categories-container {
-    position: static;
-    width: 100%;
-    background-color: #000000;
-    border-top: 1px solid #222222;
-    border-bottom: none;
-    box-shadow: none;
-    padding: 0;
+    display: none !important; /* Asegurar que la versión de escritorio esté oculta */
   }
-  .horizontal-categories-dropdown {
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    padding: 0;
-    gap: 0;
+  .categories-toggle-button .mobile-dropdown-chevron {
+    display: inline-block;
   }
-  .horizontal-category-item {
+  .categories-toggle-button .dropdown-chevron {
+    display: none;
+  } /* Ocultar chevron de escritorio */
+
+  .categories-dropdown-mobile {
+    width: 100%;
+    background-color: #080808; /* Fondo para la subsección de categorías */
+    /* No necesita padding-left aquí si los items ya lo tienen para indentación */
+  }
+
+  .categories-dropdown-mobile .horizontal-category-item, /* Reutilizamos la clase pero con estilos móviles */
+  .categories-dropdown-mobile .loading-item,
+  .categories-dropdown-mobile .error-item,
+  .categories-dropdown-mobile .no-categories-item {
+    display: block; /* Para que ocupen todo el ancho */
     width: 100%;
     text-align: left;
-    padding: 14px 15px 14px 30px;
-    border-bottom: 1px solid #222222;
+    padding: 14px 15px 14px 35px; /* Indentación (más padding-left) para sub-item */
+    border-bottom: 1px solid #222222; /* Borde entre sub-items */
     border-left: none;
     border-right: none;
-    border-top: none;
-    border-radius: 0;
-    background-color: transparent;
-    font-size: 0.9em;
+    border-top: none; /* Sin otros bordes */
+    border-radius: 0; /* Sin bordes redondeados */
+    background-color: transparent; /* El fondo lo da .categories-dropdown-mobile */
+    font-size: 0.85em; /* Ligeramente más pequeño */
+    color: #b0b0b0;
+    box-sizing: border-box;
+    text-decoration: none; /* Para los links <a> */
   }
-  .horizontal-category-item:last-child {
-    border-bottom: none;
+  .categories-dropdown-mobile .horizontal-category-item:hover {
+    background-color: #1f1f1f; /* Hover para sub-items */
+    color: #ffffff;
   }
-  .horizontal-category-item:hover {
-    background-color: #1a1a1a;
-  }
-  .horizontal-categories-dropdown .loading-item,
-  .horizontal-categories-dropdown .error-item,
-  .horizontal-categories-dropdown .no-categories-item {
-    padding: 14px 15px 14px 30px;
-    border-bottom: 1px solid #222222;
-  }
-  .horizontal-categories-dropdown .loading-item:last-child,
-  .horizontal-categories-dropdown .error-item:last-child,
-  .horizontal-categories-dropdown .no-categories-item:last-child {
+  .categories-dropdown-mobile > *:last-child {
+    /* Quitar borde del último sub-item */
     border-bottom: none;
   }
 
-  /* Selector de Idioma en Móvil */
+  /* --- SELECTOR DE IDIOMA MÓVIL --- */
   .language-selector-button {
-    justify-content: space-between !important; /* Asegurar alineación del chevron */
-    background-color: transparent !important;
-    /* Hereda width, text-align, padding, border-bottom de .navbar-end button.navbar-link */
+    /* Hereda de la regla general de items, pero con ajustes */
+    background-color: transparent !important; /* Fondo transparente como otros items móviles */
   }
-  /* Asegurar que el borde inferior se quite si es el último elemento */
-  .navbar-end > .has-dropdown:last-of-type > .language-selector-button {
-    border-bottom: none;
+  .language-selector-button .mobile-dropdown-chevron {
+    display: inline-block;
   }
-
+  .language-selector-button .dropdown-chevron {
+    display: none;
+  } /* Ocultar chevron de escritorio */
   .language-selector-button .language-icon {
     filter: none;
     opacity: 1;
   }
 
+  /* Dropdown de Idiomas en Móvil (dentro del menú principal) */
   .navbar-dropdown.language-dropdown-menu {
-    position: static;
+    position: static; /* Se integra en el flujo del menú móvil */
     width: 100%;
-    background-color: #121212;
+    background-color: #080808; /* Fondo como subsección, igual que categorías */
     border-radius: 0;
     box-shadow: none;
     border: none;
     padding: 0;
   }
+
   .language-dropdown-menu .language-option {
-    padding: 14px 15px 14px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    padding: 14px 15px 14px 35px; /* Indentación para sub-item */
     border-radius: 0;
     margin: 0;
-    border-bottom: 1px solid #282828;
+    border-bottom: 1px solid #282828; /* Borde entre opciones */
     color: #b0b0b0;
     background-color: transparent;
+    font-size: 0.85em;
+    box-sizing: border-box;
   }
   .language-dropdown-menu .language-option:last-child {
     border-bottom: none;
   }
   .language-dropdown-menu .language-option:hover {
     background-color: #252525;
+    color: #ffffff;
   }
   .language-dropdown-menu .language-option.is-active-lang {
-    background-color: #2a2a2a;
+    background-color: #1c1c1c; /* Color activo más sutil en móvil */
     color: #ffffff;
     font-weight: 500;
+  }
+  .language-dropdown-menu .language-option.is-active-lang:hover {
+    background-color: #2a2a2a;
+  }
+
+  /* Rotación de chevrons móviles al expandir */
+  .categories-toggle-button[aria-expanded="true"] .mobile-dropdown-chevron,
+  .language-selector-button[aria-expanded="true"] .mobile-dropdown-chevron {
+    transform: rotate(-135deg); /* Flecha hacia arriba */
+  }
+}
+
+/* --- ESTILOS DE ESCRITORIO (min-width) --- */
+@media (min-width: 993px) {
+  .navbar {
+    padding: 0 30px; /* Padding original de escritorio */
+    min-height: 70px; /* Altura original de escritorio */
+  }
+
+  /* Restaurar estilos de brand para escritorio */
+  .navbar-brand a {
+    /* Combina con la clase específica si es necesario, o usa esta */
+    font-size: 1.6em;
+    padding-bottom: 15px;
+    margin-bottom: -1px;
+    margin-right: 20px; /* Espacio antes del menú de escritorio */
+  }
+  /* Si usaste .navbar-brand-desktop-styles, aplícala en el JSX o usa este selector */
+
+  .navbar-toggle {
+    display: none !important; /* Asegurar que el toggle esté oculto en escritorio */
+  }
+
+  /* Restaurar el menú de escritorio */
+  .navbar-menu {
+    display: flex !important; /* Sobreescribe el display:none de móvil */
+    position: static;
+    flex-direction: row;
+    width: auto; /* No 100% */
+    background-color: transparent;
+    border-top: none;
+    max-height: none;
+    overflow-y: visible;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+
+  .navbar-start,
+  .navbar-end {
+    flex-direction: row; /* Horizontal */
+    width: auto;
+    align-items: center;
+  }
+  .navbar-start {
+    /* Estilos desktop */
+    padding-bottom: 15px;
+    border-bottom: 1px solid #444444;
+    margin-bottom: -16px;
+  }
+  .navbar-end {
+    /* Estilos desktop */
+    /* No necesita mucho más si los items se autoajustan */
+  }
+
+  /* Restaurar items de escritorio */
+  .navbar-start .navbar-item,
+  .navbar-end .navbar-item, /* Contenedores y links */
+  .navbar-end button.navbar-link {
+    width: auto;
+    padding: 0; /* Reset general, padding específico abajo */
+    border-bottom: none;
+    margin-left: 8px; /* Espacio entre items del final */
+    background-color: transparent;
+    color: #ffffff;
+    display: flex;
+    justify-content: initial; /* Reset */
+    align-items: center;
+  }
+  .navbar-start .navbar-item {
+    /* Específico para items de navbar-start */
+    padding: 0 12px; /* Padding original */
+  }
+  .navbar-end > .navbar-item:not(.has-dropdown) {
+    /* Link "Contacto" */
+    padding: 10px 12px;
+  }
+  .navbar-end button.navbar-link {
+    /* Botones "Categorías", "Idioma" */
+    padding: 10px 12px;
+  }
+
+  .navbar-start .navbar-item:not(:first-child)::before {
+    display: inline; /* Mostrar separador "/" en escritorio */
+  }
+
+  /* Asegurar que dropdowns móviles estén ocultos y los de escritorio visibles/funcionen */
+  .categories-dropdown-mobile {
+    display: none !important;
+  }
+  .horizontal-categories-container {
+    display: flex; /* O el display que uses para mostrarlo */
+  }
+
+  .language-selector-button .mobile-dropdown-chevron {
+    display: none;
+  }
+  .language-selector-button .dropdown-chevron {
+    display: inline-block;
+  } /* Mostrar chevron de escritorio */
+
+  .language-selector-button {
+    /* Restaurar fondo escritorio */
+    background-color: #222222 !important;
+  }
+  .language-selector-button:hover {
+    background-color: #333333 !important;
+  }
+  .language-selector-button.is-open {
+    background-color: #333333 !important;
+  }
+  .language-selector-button .language-icon {
+    filter: grayscale(30%) opacity(80%);
+  }
+
+  .navbar-dropdown.language-dropdown-menu {
+    /* Dropdown idioma escritorio */
+    position: absolute; /* Asegurar posición absoluta en desktop */
+    /* ... el resto de tus estilos de escritorio para este dropdown ... */
   }
 }

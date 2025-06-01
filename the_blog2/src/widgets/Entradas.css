@@ -1,0 +1,519 @@
+/* EntradasNuevas.css MODIFICADO PARA LAYOUT ORIGINAL CON SIDEBAR COMBINADO */
+
+:root {
+  --cab-background-color: #000000;
+  --cab-sidebar-background: #1a1a1a;
+  --cab-text-color-primary: #e0e0e0;
+  --cab-text-color-secondary: #b0b0b0;
+  --cab-text-color-brand: #ffffff;
+  --cab-accent-color: #00e0c6;
+  --cab-link-hover-color: #ffffff;
+  --cab-font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --cab-font-secondary: "Georgia", serif;
+  --cab-font-brand: "Arial Black", Gadget, sans-serif;
+
+  --cab-sidebar-brand-width: 58px;
+  --cab-main-content-max-width: 1200px;
+  --cab-sidebar-main-gap: 15px;
+  --cab-section-gap: 30px; /* Espacio entre elementos de flex principales */
+  --cab-sidebar-column-internal-gap: 20px; /* Espacio entre Top Stories y About Me */
+  --cab-card-background: #1c1c1c;
+}
+
+/* --- Reset Básico y Estilos Globales --- */
+body {
+  margin: 0;
+  font-family: var(--cab-font-primary);
+  background-color: var(--cab-background-color);
+  color: var(--cab-text-color-primary);
+  line-height: 1.6;
+}
+* {
+  box-sizing: border-box;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* --- Estructura Principal del Layout --- */
+.claudio-ariza-balseca-layout {
+  display: flex;
+  min-height: 100vh;
+  max-width: calc(
+    var(--cab-sidebar-brand-width) + var(--cab-sidebar-main-gap) +
+      var(--cab-main-content-max-width)
+  );
+  margin: 0 auto;
+  gap: var(--cab-sidebar-main-gap);
+}
+
+/* --- Sidebar de la Marca (Izquierda) --- */
+.cab-sidebar-brand {
+  background-color: var(--cab-background-color);
+  width: var(--cab-sidebar-brand-width);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.cab-brand-title {
+  font-family: var(--cab-font-brand);
+  color: var(--cab-text-color-brand);
+  font-size: 40px;
+  font-weight: bold;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* --- Contenido Principal (Centro/Derecha) --- */
+.cab-main-content {
+  flex-grow: 1;
+  padding: 35px;
+  display: flex;
+  flex-direction: column; /* Apila .cab-main-content-top-row y .cab-all-posts */
+  gap: var(--cab-section-gap);
+  max-width: var(--cab-main-content-max-width);
+}
+
+/* NUEVO: Contenedor para la fila superior (Destacado + Columna Sidebar) */
+.cab-main-content-top-row {
+  display: flex;
+  flex-direction: row; /* Destacado al lado de la columna de sidebar */
+  gap: var(--cab-section-gap); /* Espacio entre Destacado y Columna Sidebar */
+}
+
+/* --- Entrada Destacada --- */
+.cab-featured-post {
+  flex: 1.8; /* Proporción mayor en la fila, ajustar según necesidad */
+  min-height: 400px; /* Mantenemos una buena altura para el destacado */
+  /* width se define por flex, no necesita ser 100% aquí */
+}
+/* Estilos de .cab-featured-post-link y sus hijos permanecen igual */
+.cab-featured-post-link {
+  display: block;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  color: var(--cab-text-color-brand);
+  height: 100%;
+}
+.cab-featured-image-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.cab-featured-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+    filter 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.cab-featured-text-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px 20px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.75) 50%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  box-sizing: border-box;
+}
+.cab-featured-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-top: auto;
+  margin-bottom: 8px;
+  line-height: 1.1;
+  color: var(--cab-text-color-brand);
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+.cab-featured-summary {
+  font-size: 0.85rem;
+  color: var(--cab-text-color-primary);
+  margin-bottom: 10px;
+  font-family: var(--cab-font-primary);
+  line-height: 1.3;
+  max-width: 90%;
+}
+.cab-featured-meta {
+  font-size: 0.7rem;
+  color: var(--cab-text-color-secondary);
+  display: flex;
+  align-items: center;
+}
+.cab-featured-meta .cab-author-name {
+  font-weight: bold;
+  color: var(--cab-accent-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cab-featured-meta .cab-publication-date::before {
+  content: "•";
+  margin: 0 8px;
+  color: var(--cab-text-color-secondary);
+}
+.cab-featured-post-link:hover .cab-featured-image {
+  transform: scale(1.03);
+  filter: brightness(1.1);
+}
+.cab-featured-post-link:hover .cab-featured-title {
+  color: var(--cab-link-hover-color);
+}
+
+/* NUEVO: Columna para la Barra Lateral (Top Stories + About Me) */
+.cab-sidebar-column {
+  flex: 1; /* Proporción menor en la fila, se ajustará hasta su max-width */
+  max-width: 380px; /* Ancho máximo como el sidebar original */
+  display: flex;
+  flex-direction: column;
+  gap: var(
+    --cab-sidebar-column-internal-gap
+  ); /* Espacio entre Top Stories y About Me */
+}
+
+/* --- Títulos de Sección Genéricos (para Top Stories y About Me) --- */
+.cab-section-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--cab-text-color-primary);
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+}
+
+/* --- Sección "Top Stories" --- */
+.cab-top-stories {
+  width: 100%; /* Ocupa el ancho de .cab-sidebar-column */
+  background-color: var(--cab-sidebar-background);
+  padding: 20px;
+  border-radius: 8px;
+  /* max-width y align-self ya no son necesarios aquí, los controla .cab-sidebar-column */
+}
+/* Estilos internos de .cab-top-stories-list y .cab-top-story-item permanecen igual */
+.cab-top-stories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.cab-top-story-item {
+  border-bottom: 1px solid #2a2a2a;
+  padding-bottom: 15px;
+}
+.cab-top-story-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.cab-top-story-link {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+.cab-top-story-text {
+  flex-grow: 1;
+  display: flex;
+  gap: 8px;
+}
+.cab-top-story-number {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--cab-accent-color);
+  line-height: 1.4;
+  min-width: 20px;
+  text-align: right;
+  padding-top: 2px;
+}
+.cab-top-story-title-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 4px;
+}
+.cab-top-story-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.3;
+  color: var(--cab-text-color-primary);
+  transition: color 0.2s ease;
+}
+.cab-top-story-link:hover .cab-top-story-title {
+  color: var(--cab-link-hover-color);
+  text-decoration: underline;
+  text-decoration-color: var(--cab-accent-color);
+}
+.cab-top-story-meta {
+  font-size: 0.7rem;
+  color: var(--cab-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cab-author-name-small {
+  font-weight: 600;
+}
+.cab-publication-date-small::before {
+  content: "•";
+  margin-right: 6px;
+  color: var(--cab-text-color-secondary);
+}
+.cab-top-story-image {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* --- Sección "Sobre Mí" --- */
+.cab-about-me {
+  width: 100%; /* Ocupa el ancho de .cab-sidebar-column */
+  background-color: var(--cab-sidebar-background);
+  padding: 20px;
+  border-radius: 8px;
+}
+.cab-about-me-content p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--cab-text-color-secondary);
+  margin-bottom: 10px;
+}
+.cab-about-me-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Sección "Todas las Publicaciones" --- */
+/* Título para "Todas las Publicaciones" */
+.cab-section-title-full-width {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-top: 0; /* Ajustar si es el primer elemento después de un gap grande */
+  margin-bottom: 25px;
+  color: var(--cab-text-color-primary);
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+}
+
+.cab-all-posts {
+  width: 100%; /* Ocupa todo el ancho de .cab-main-content */
+}
+.cab-all-posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+}
+.cab-post-card {
+  background-color: var(--cab-card-background);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.cab-post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 224, 198, 0.1);
+}
+.cab-post-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.cab-post-card-image-container {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+.cab-post-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cab-post-card-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.cab-post-card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--cab-text-color-primary);
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+.cab-post-card:hover .cab-post-card-title {
+  color: var(--cab-accent-color);
+}
+.cab-post-card-summary {
+  font-size: 0.8rem;
+  color: var(--cab-text-color-secondary);
+  margin-bottom: 12px;
+  line-height: 1.4;
+  flex-grow: 1;
+}
+.cab-post-card-meta {
+  font-size: 0.7rem;
+  color: var(--cab-text-color-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+.cab-post-card-meta .cab-author-name-small,
+.cab-post-card-meta .cab-publication-date-small {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cab-post-card-meta .cab-author-name-small {
+  font-weight: 600;
+}
+.cab-read-more-link {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--cab-accent-color);
+  text-transform: uppercase;
+  align-self: flex-start;
+  margin-top: auto;
+}
+.cab-post-card:hover .cab-read-more-link {
+  color: var(--cab-link-hover-color);
+  text-decoration: underline;
+}
+
+/* --- Estados de carga y error --- */
+.entradas-status-loading,
+.entradas-status-error,
+.entradas-status-no-entries {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 1.2rem;
+  color: var(--cab-text-color-secondary);
+  width: 100%;
+}
+.entradas-status-error {
+  color: #ff6b6b;
+}
+
+/* --- Media Queries para Responsividad --- */
+@media (max-width: 992px) {
+  .cab-main-content-top-row {
+    flex-direction: column; /* Apila Destacado y Columna Sidebar */
+  }
+
+  .cab-featured-post,
+  .cab-sidebar-column {
+    width: 100%; /* Ocupan el ancho completo al apilarse */
+    max-width: none; /* Anula max-width de .cab-sidebar-column */
+    flex-basis: auto; /* Resetea la base de flex */
+  }
+
+  .cab-featured-post-link {
+    min-height: 250px; /* Ajustar altura en tablet */
+  }
+  .cab-main-content {
+    padding: 20px 15px;
+  }
+  .cab-all-posts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .claudio-ariza-balseca-layout {
+    gap: 0;
+  }
+  .cab-sidebar-brand {
+    display: none;
+  }
+  .cab-main-content {
+    padding: 15px 10px;
+  }
+
+  .cab-featured-post-link {
+    min-height: 200px;
+    border-radius: 0;
+  }
+  .cab-featured-text-content {
+    padding: 10px;
+  }
+  .cab-featured-title {
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+  }
+  .cab-featured-summary {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+  .cab-featured-meta {
+    font-size: 0.65rem;
+  }
+
+  .cab-sidebar-column {
+    gap: var(--cab-section-gap);
+  } /* Mantener gap entre Top Stories y About Me */
+  .cab-top-stories,
+  .cab-about-me {
+    padding: 15px;
+    border-radius: 0;
+  }
+  .cab-top-story-image {
+    width: 60px;
+    height: 60px;
+  }
+  .cab-top-story-title {
+    font-size: 0.9rem;
+  }
+
+  .cab-all-posts-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .cab-post-card-image-container {
+    height: 160px;
+  }
+  .cab-post-card-title {
+    font-size: 1rem;
+  }
+}
