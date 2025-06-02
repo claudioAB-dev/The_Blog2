@@ -4,7 +4,7 @@ import { useLanguage } from "../features/LanguageContext"; // Ajusta la ruta si 
 import type { LanguageCode } from "../features/LanguageContext"; // Ajusta la ruta si es necesario
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import "./Entradas.css"; // Asegúrate de que este archivo CSS esté actualizado
+import "./style/Entradas.css"; // Asegúrate de que este archivo CSS esté actualizado
 import IconButton from "@mui/material/IconButton";
 
 // --- Definición de Traducciones Estáticas de la Página ---

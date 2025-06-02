@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useLanguage } from "../features/LanguageContext"; // Ruta actualizada
 import type { LanguageCode } from "../features/LanguageContext"; // Ruta actualizada
-import "./EntradaDetalle.css"; // Asegúrate que la ruta sea correcta o crea el archivo
+import "./style/EntradaDetalle.css"; // Asegúrate que la ruta sea correcta o crea el archivo
 
 interface BlogPost {
   id: number;

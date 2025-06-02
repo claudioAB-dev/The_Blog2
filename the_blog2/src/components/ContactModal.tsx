@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useLanguage } from "../features/LanguageContext"; // RUTA ACTUALIZADA
 import type { LanguageCode } from "../features/LanguageContext"; // RUTA ACTUALIZADA
-import "./ContactModal.css"; // Asegúrate que la ruta sea correcta o crea el archivo
+import "./style/ContactModal.css"; // Asegúrate que la ruta sea correcta o crea el archivo
 
 // Definición de traducciones para el modal de contacto
 const contactModalTranslations: Record<

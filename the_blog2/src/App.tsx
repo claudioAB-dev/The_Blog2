@@ -1,8 +1,8 @@
 // src/App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./widgets/Navbar";
-import EntradasNuevas from "./widgets/EntradasNuevas";
-import EntradaDetalle from "./widgets/EntradaDetalle"; // <--- 1. IMPORTA EL COMPONENTE
+import Navbar from "./components/Navbar";
+import EntradasNuevas from "./components/EntradasNuevas";
+import EntradaDetalle from "./components/EntradaDetalle";
 
 function App() {
   return (

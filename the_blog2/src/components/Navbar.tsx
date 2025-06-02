@@ -1,7 +1,7 @@
 // Navbar.tsx
 
 import React, { useState, useEffect, useRef } from "react";
-import "./Navbar.css";
+import "./style/Navbar.css";
 import { useLanguage } from "../features/LanguageContext";
 import type { LanguageCode } from "../features/LanguageContext";
 import ContactModal from "./ContactModal";
