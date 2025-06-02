@@ -18,6 +18,8 @@
   --cab-section-gap: 30px; /* Espacio entre elementos de flex principales */
   --cab-sidebar-column-internal-gap: 20px; /* Espacio entre Top Stories y About Me */
   --cab-card-background: #1c1c1c;
+
+  /* ... etc. ... */
 }
 
 /* --- Reset Básico y Estilos Globales --- */
@@ -516,4 +518,42 @@ ul {
   .cab-post-card-title {
     font-size: 1rem;
   }
+}
+.cab-about-me-content .cab-social-links {
+  margin-top: 20px; /* Espacio después del párrafo de descripción */
+  display: flex; /* Habilita Flexbox */
+  justify-content: center; /* Centra los IconButtons horizontalmente */
+  align-items: center; /* Alinea los IconButtons verticalmente (útil si tienen diferentes alturas) */
+  gap: 15px; /* Espacio entre cada IconButton */
+}
+
+/* Estilo para los IconButton que actúan como contenedores de iconos */
+.cab-about-me-content .cab-social-icon {
+  /* Material-UI IconButton ya tiene estilos base. 
+     Puedes anularlos o añadir aquí si necesitas un tamaño específico para el botón en sí,
+     o un efecto de fondo al pasar el mouse sobre el área del botón. */
+  padding: 8px; /* Ajusta el padding del IconButton si es necesario */
+}
+
+/* Estilo para los iconos SVG de Material-UI (LinkedInIcon, GitHubIcon) */
+.cab-about-me-content .cab-social-icon svg {
+  color: var(--cab-accent-color); /* ¡Este es el color "azul" de acento! */
+  font-size: 2.2rem; /* Ajusta el tamaño del icono SVG. Puedes usar px, em, o rem. */
+  transition: color 0.25s ease-in-out, transform 0.25s ease-in-out;
+}
+
+/* Efecto hover para los iconos SVG */
+.cab-about-me-content .cab-social-icon:hover svg {
+  color: var(
+    --cab-link-hover-color
+  ); /* Cambia el color del icono al pasar el mouse */
+  transform: scale(1.15); /* Agranda ligeramente el icono al pasar el mouse */
+}
+
+/* Opcional: Efecto de hover en el fondo del IconButton (el círculo) */
+.cab-about-me-content .cab-social-icon:hover {
+  background-color: rgba(
+    var(--cab-accent-color-rgb),
+    0.1
+  ); /* Un brillo sutil usando el color de acento con transparencia */
 }

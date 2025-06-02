@@ -1,5 +1,4 @@
 // src/App.tsx
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./widgets/Navbar";
 import EntradasNuevas from "./widgets/EntradasNuevas";

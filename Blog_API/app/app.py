@@ -42,9 +42,6 @@ def create_app():
     current_app.register_blueprint(main_bp) # Tu blueprint principal, usualmente con prefijo como /api
 
     # Ruta simple de prueba
-    @current_app.route('/')
-    def index():
-        return jsonify({"message": "Hola Mundo desde Flask!"})
 
     return current_app
 

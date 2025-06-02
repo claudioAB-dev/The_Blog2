@@ -2,8 +2,10 @@ import React, { useMemo, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../features/LanguageContext"; // Ajusta la ruta si es necesario
 import type { LanguageCode } from "../features/LanguageContext"; // Ajusta la ruta si es necesario
-
+import GitHubIcon from "@mui/icons-material/GitHub";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import "./Entradas.css"; // Asegúrate de que este archivo CSS esté actualizado
+import IconButton from "@mui/material/IconButton";
 
 // --- Definición de Traducciones Estáticas de la Página ---
 const BlogTranslations: Record<
@@ -385,8 +387,32 @@ const EntradasNuevas: React.FC = () => {
             <aside className="cab-about-me">
               <h3 className="cab-section-title">{aboutMeTitleText}</h3>
               <div className="cab-about-me-content">
-                <p>{aboutMeContentPlaceholderText}</p>
-                <p>{aboutMeSoftwareDevText}</p>
+                <p>{getTranslation("aboutMeSoftwareDev", currentLanguage)}</p>
+
+                {/* NUEVO: Enlaces a perfiles con Iconos de Material-UI */}
+                <div className="cab-social-links">
+                  <IconButton
+                    aria-label="LinkedIn Profile"
+                    href="https://www.linkedin.com/in/claudio-ariza-balseca-865853226/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    // Puedes añadir estilos directamente con la prop `sx` o usando tus clases CSS
+                    // sx={{ color: 'yourDesiredColor' }} // Ejemplo de estilo en línea
+                    className="cab-social-icon" // Puedes usar una clase común o específica si necesitas más estilos
+                  >
+                    <LinkedInIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="GitHub Profile"
+                    href="https://github.com/claudioAB-dev"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    // sx={{ color: 'yourDesiredColor' }} // Ejemplo de estilo en línea
+                    className="cab-social-icon" // Puedes usar una clase común o específica
+                  >
+                    <GitHubIcon />
+                  </IconButton>
+                </div>
               </div>
             </aside>
           </div>
