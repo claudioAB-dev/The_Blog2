@@ -1,34 +1,12 @@
-/* src/widgets/EntradaDetalle.css */
-
-/* --- Variables y Estilos Base (heredados o inspirados de Entradas.css) --- */
-:root {
-  /* Estas son las variables que ya tienes definidas en Entradas.css */
-  /* No es necesario re-declararlas aquí si EntradaDetalle.css se carga después 
-       o si las variables están en un :root global en index.css, 
-       pero las incluyo comentadas para referencia de diseño. */
-  /* --cab-background-color: #000000;
-    --cab-text-color-primary: #e0e0e0;
-    --cab-text-color-secondary: #b0b0b0;
-    --cab-accent-color: #00e0c6;
-    --cab-link-hover-color: #ffffff;
-    --cab-font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --cab-font-secondary: "Georgia", serif;
-    --cab-main-content-max-width: 1200px;
-    --cab-card-background: #1c1c1c; 
-    */
-}
-
 /* --- Contenedor Principal del Detalle de Entrada --- */
 .entrada-detalle-container {
   font-family: var(--cab-font-primary);
   color: var(--cab-text-color-primary);
-  background-color: var(
-    --cab-background-color
-  ); /* Fondo principal de la página */
-  padding: 20px 15px; /* Similar al padding de cab-main-content en móviles */
-  max-width: var(--cab-main-content-max-width); /* Ancho máximo del contenido */
-  margin: 0 auto; /* Centrar el contenedor */
-  line-height: 1.7; /* Mejor legibilidad para texto largo */
+  background-color: var(--cab-background-color);
+  padding: 20px 15px;
+  max-width: var(--cab-main-content-max-width);
+  margin: 0 auto;
+  line-height: 1.7;
 }
 
 /* --- Artículo y Cabecera --- */

@@ -12,16 +12,6 @@ const BlogTranslations: Record<
   string,
   Partial<Record<LanguageCode, string>>
 > = {
-  blogPageTitle: {
-    ES: "Entradas del Blog",
-    EN: "Blog Entries",
-    DE: "Blog-Einträge",
-  },
-  latestPost: {
-    ES: "Última Entrada",
-    EN: "Latest Post",
-    DE: "Neuester Beitrag",
-  },
   noEntriesMessage: {
     ES: "No hay entradas disponibles en este momento.",
     EN: "No entries available at this time.",
@@ -51,9 +41,11 @@ const BlogTranslations: Record<
     DE: "Hier kommt eine kurze Beschreibung über mich.",
   },
   aboutMeSoftwareDev: {
-    ES: "Como desarrollador de software, me especializo en la creación de soluciones innovadoras y eficientes. Mi pasión es transformar ideas en código funcional y robusto.",
-    EN: "As a software developer, I specialize in creating innovative and efficient solutions. My passion is transforming ideas into functional and robust code.",
-    DE: "Als Softwareentwickler spezialisiere ich mich auf die Entwicklung innovativer und effizienter Lösungen. Meine Leidenschaft ist es, Ideen in funktionalen und robusten Code umzusetzen.",
+    ES: "Como desarrollador full stack, me especializo en la creación de soluciones tecnológicas completas e innovadoras. Mi pasión radica en transformar ideas complejas en aplicaciones funcionales, escalables y robustas que generen un impacto real. Con una mentalidad de aprendizaje continuo, me mantengo actualizado con las últimas tendencias y tecnologías, enfrentando nuevos desafíos técnicos que me permitan expandir mis habilidades y explorar diferentes stacks tecnológicos.",
+
+    EN: "As a full stack developer, I specialize in creating comprehensive and innovative technological solutions. My passion lies in transforming complex ideas into functional, scalable, and robust applications that generate real impact. With a continuous learning mindset, I stay updated with the latest trends and technologies, embracing new technical challenges that allow me to expand my skills and explore different technology stacks. ",
+
+    DE: "Als Full-Stack-Entwickler spezialisiere ich mich auf die Erstellung umfassender und innovativer technologischer Lösungen. Meine Leidenschaft liegt darin, komplexe Ideen in funktionale, skalierbare und robuste Anwendungen zu verwandeln, die echte Wirkung erzielen. Mit einer kontinuierlichen Lernmentalität halte ich mich über die neuesten Trends und Technologien auf dem Laufenden und nehme neue technische Herausforderungen.",
   },
   allPostsTitle: {
     ES: "Todas las Publicaciones",
@@ -271,7 +263,7 @@ const EntradasNuevas: React.FC = () => {
 
   const latestPost = allBlogPosts[0];
   const topStoriesPosts =
-    allBlogPosts.length > 1 ? allBlogPosts.slice(1, 5) : [];
+    allBlogPosts.length > 1 ? allBlogPosts.slice(1, 4) : [];
 
   return (
     <div className="claudio-ariza-balseca-layout">

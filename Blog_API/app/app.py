@@ -1,57 +1,56 @@
+# Blog_API/app/app.py
 import os
-from flask import Flask, jsonify # request no se usa directamente aquí, pero podría ser usado en blueprints
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_bcrypt import Bcrypt # IMPORTACIÓN
 from dotenv import load_dotenv
+from flask_jwt_extended import JWTManager
 
-# Cargar variables de entorno desde .env
 load_dotenv()
+jwt = JWTManager()
+# Importar modelos DESPUÉS de db, pero antes de usarlos en la factory si es necesario
+# o dentro de la factory si hay dependencias circulares que evitar.
+# Por ahora, asumimos que los modelos no dependen directamente de 'app' en su definición inicial.
+from .models import db # Models usa 'db', que se inicializa aquí.
+# Los modelos como Autor, que usan current_app.extensions['bcrypt'],
+# lo harán cuando se llamen sus métodos, momento en el cual la app ya debería estar configurada.
 
-# Importar la instancia de db y los modelos.
-# Esto asume que models.py define 'db = SQLAlchemy()' y tus modelos.
-from .models import db, Autor, Entrada, Comentario # Asegúrate que estos modelos estén definidos en models.py
-
-# Importar el Blueprint principal para las rutas.
-# Esto asume que routes.py define 'main_bp = Blueprint(...)' y sus rutas.
 from .routes import main_bp
+# Puedes crear la instancia de bcrypt aquí
+bcrypt = Bcrypt()
+
+from . import commands
 
 def create_app():
-    """
-    Factory para crear y configurar la aplicación Flask.
-    """
     current_app = Flask(__name__)
+    CORS(current_app, resources={r"/*": {"origins": "*"}})
 
-    # Configuración de CORS: permitir solicitudes desde cualquier origen.
-    # Para producción, considera restringir los orígenes:
-    # CORS(current_app, resources={r"/api/*": {"origins": "https://tufrontend.com"}})
-    CORS(current_app, resources={r"/*": {"origins": "*"}})  # <--- Esto permite CORS para todo
-
-    # Configuración de la base de datos
     database_uri = os.getenv('DATABASE_URI')
     if not database_uri:
         raise RuntimeError("DATABASE_URI no está configurada en las variables de entorno.")
     
     current_app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
     current_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    current_app.config['SQLALCHEMY_ECHO'] = False # Pon en True para ver las queries SQL generadas (útil para debug)
+    current_app.config['SQLALCHEMY_ECHO'] = False
+    # ... otras configuraciones de la app ...
+    current_app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'tu-clave-secreta-predeterminada') # Asegúrate de tener esto para JWT
 
-    # Inicializar la extensión SQLAlchemy con la aplicación
+    # Inicializar extensiones
     db.init_app(current_app)
+    bcrypt.init_app(current_app) # <--- INICIALIZACIÓN DE BCRYPT CON LA APP
+    jwt.init_app(current_app)  # O con 'app' si usas 'app = Flask(__name__)'
+
+    # jwt.init_app(current_app) # Si usas Flask-JWT-Extended, también debe inicializarse aquí
 
     # Registrar Blueprints
-    current_app.register_blueprint(main_bp) # Tu blueprint principal, usualmente con prefijo como /api
-
-    # Ruta simple de prueba
-
+    current_app.register_blueprint(main_bp) # Puedes añadir un prefijo, ej: url_prefix='/api'
+    commands.register_commands(current_app)
     return current_app
 
-# Crear la aplicación usando la factory
-app = create_app()
+app = create_app() 
 
-# El siguiente bloque es para ejecutar la aplicación directamente con 'python app.py'.
-# Es útil para desarrollo local. Para producción, se suele usar un servidor WSGI como Gunicorn o Waitress.
 if __name__ == '__main__':
-    # Considera obtener el puerto y el modo debug de variables de entorno también
     port = int(os.getenv('FLASK_RUN_PORT', 5000))
     debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
     app.run(debug=debug_mode, port=port, host='0.0.0.0')

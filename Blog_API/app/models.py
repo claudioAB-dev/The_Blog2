@@ -1,9 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from flask import current_app 
-
+from flask import current_app
 db = SQLAlchemy()
-
 class Autor(db.Model):
     __tablename__ = 'autor'
     id = db.Column(db.Integer, primary_key=True)
@@ -17,12 +15,12 @@ class Autor(db.Model):
 
     def set_password(self, password):
         """Hashea y guarda la contraseña."""
-        bcrypt = current_app.extensions['bcrypt']
+        from app.app import bcrypt  # Import aquí, no arriba
         self.contrasena = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
         """Verifica la contraseña contra el hash almacenado."""
-        bcrypt = current_app.extensions['bcrypt']
+        from app.app import bcrypt  # Import aquí, no arriba
         return bcrypt.check_password_hash(self.contrasena, password)
 
     def __repr__(self):

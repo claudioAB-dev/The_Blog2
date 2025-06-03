@@ -1,0 +1,380 @@
+/* PostsPorCategoria.css - Estilos modernos para páginas de categoría */
+
+/* Usar las mismas variables CSS del archivo principal */
+:root {
+  --cab-background-color: #000000;
+  --cab-sidebar-background: #1a1a1a;
+  --cab-text-color-primary: #e0e0e0;
+  --cab-text-color-secondary: #b0b0b0;
+  --cab-text-color-brand: #ffffff;
+  --cab-accent-color: #00e0c6;
+  --cab-link-hover-color: #ffffff;
+  --cab-font-primary: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --cab-font-secondary: "Georgia", serif;
+  --cab-font-brand: "Arial Black", Gadget, sans-serif;
+  --cab-card-background: #1c1c1c;
+  --cab-section-gap: 30px;
+}
+
+/* Contenedor principal de la página de categoría */
+.posts-por-categoria-container {
+  padding: 35px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* Título de la página con efecto moderno */
+.posts-categoria-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--cab-text-color-brand);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 20px 0 40px 0;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.posts-categoria-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cab-accent-color), transparent);
+  border-radius: 2px;
+}
+
+/* Breadcrumb/navegación superior */
+.posts-categoria-breadcrumb {
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+  color: var(--cab-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.posts-categoria-breadcrumb a {
+  color: var(--cab-accent-color);
+  transition: color 0.3s ease;
+  font-weight: 600;
+}
+
+.posts-categoria-breadcrumb a:hover {
+  color: var(--cab-link-hover-color);
+  text-decoration: underline;
+  text-decoration-color: var(--cab-accent-color);
+}
+
+/* Grid mejorado para los posts */
+.posts-categoria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+/* Tarjetas de posts con efectos modernos */
+.posts-categoria-card {
+  background: var(--cab-card-background);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.posts-categoria-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 224, 198, 0.05) 0%,
+    rgba(0, 224, 198, 0) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.posts-categoria-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 8px 16px rgba(0, 224, 198, 0.15);
+  border-color: rgba(0, 224, 198, 0.3);
+}
+
+.posts-categoria-card:hover::before {
+  opacity: 1;
+}
+
+/* Enlaces de las tarjetas */
+.posts-categoria-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+/* Contenedor de imagen mejorado */
+.posts-categoria-image-container {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.posts-categoria-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.posts-categoria-card:hover .posts-categoria-image {
+  transform: scale(1.05);
+}
+
+/* Overlay sutil en la imagen */
+.posts-categoria-image-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.posts-categoria-card:hover .posts-categoria-image-container::after {
+  opacity: 1;
+}
+
+/* Contenido de la tarjeta */
+.posts-categoria-content {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Título del post */
+.posts-categoria-post-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cab-text-color-primary);
+  margin: 0 0 15px 0;
+  line-height: 1.3;
+  transition: color 0.3s ease;
+}
+
+.posts-categoria-card:hover .posts-categoria-post-title {
+  color: var(--cab-accent-color);
+}
+
+/* Resumen del post */
+.posts-categoria-summary {
+  font-size: 0.95rem;
+  color: var(--cab-text-color-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+/* Metadatos del post */
+.posts-categoria-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-size: 0.8rem;
+  color: var(--cab-text-color-secondary);
+}
+
+.posts-categoria-author {
+  font-weight: 600;
+  color: var(--cab-accent-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.posts-categoria-date {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Enlace "Leer más" mejorado */
+.posts-categoria-read-more {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cab-accent-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  align-self: flex-start;
+  margin-top: auto;
+  transition: all 0.3s ease;
+}
+
+.posts-categoria-read-more::after {
+  content: "→";
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+
+.posts-categoria-card:hover .posts-categoria-read-more {
+  color: var(--cab-link-hover-color);
+}
+
+.posts-categoria-card:hover .posts-categoria-read-more::after {
+  transform: translateX(5px);
+}
+
+/* Estados de carga, error y sin contenido */
+.posts-categoria-status {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  text-align: center;
+  gap: 20px;
+}
+
+.posts-categoria-loading {
+  font-size: 1.2rem;
+  color: var(--cab-text-color-secondary);
+  position: relative;
+}
+
+.posts-categoria-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--cab-accent-color);
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.posts-categoria-error {
+  color: #ff6b6b;
+  font-size: 1.2rem;
+}
+
+/* Mensaje cuando no hay posts */
+.posts-categoria-no-posts {
+  font-size: 1.2rem;
+  color: var(--cab-text-color-secondary);
+}
+
+/* Navegación inferior */
+.posts-categoria-navigation {
+  margin-top: 50px;
+  text-align: center;
+  padding: 30px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.posts-categoria-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 25px;
+  background: rgba(0, 224, 198, 0.1);
+  color: var(--cab-accent-color);
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 224, 198, 0.3);
+}
+
+.posts-categoria-back-link::before {
+  content: "←";
+  font-size: 1.1em;
+  transition: transform 0.3s ease;
+}
+
+.posts-categoria-back-link:hover {
+  background: var(--cab-accent-color);
+  color: var(--cab-background-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 224, 198, 0.3);
+}
+
+.posts-categoria-back-link:hover::before {
+  transform: translateX(-3px);
+}
+
+/* Responsividad */
+@media (max-width: 992px) {
+  .posts-por-categoria-container {
+    padding: 25px 20px;
+  }
+
+  .posts-categoria-title {
+    font-size: 2rem;
+  }
+
+  .posts-categoria-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .posts-por-categoria-container {
+    padding: 20px 15px;
+  }
+
+  .posts-categoria-title {
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+  }
+
+  .posts-categoria-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .posts-categoria-image-container {
+    height: 180px;
+  }
+
+  .posts-categoria-content {
+    padding: 20px;
+  }
+
+  .posts-categoria-post-title {
+    font-size: 1.1rem;
+  }
+}
