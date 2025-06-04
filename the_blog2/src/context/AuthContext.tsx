@@ -1,10 +1,16 @@
 // src/context/AuthContext.tsx
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useMemo, // Importado para memoizar el valor del contexto
+} from "react";
 import type { ReactNode } from "react";
 
 interface AuthUser {
   id: number;
-  email: string; // O el campo que uses para identificar al usuario
+  email: string;
   is_admin: boolean;
 }
 
@@ -15,7 +21,7 @@ interface AuthContextType {
   isAdmin: boolean;
   login: (newToken: string, userData: AuthUser) => void;
   logout: () => void;
-  isLoading: boolean;
+  isLoading: boolean; // Mantenemos isLoading para la carga inicial del token
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,24 +31,41 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Para verificar el token inicial
+  // isLoading se refiere a la carga inicial del token desde localStorage
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Al cargar la app, intentar recuperar el token y usuario de localStorage
-    const storedToken = localStorage.getItem("authToken");
-    const storedUser = localStorage.getItem("authUser");
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser) as AuthUser);
-      } catch (error) {
-        console.error("Error parsing stored user data:", error);
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("authUser");
+    try {
+      const storedToken = localStorage.getItem("authToken");
+      const storedUserString = localStorage.getItem("authUser");
+
+      if (storedToken && storedUserString) {
+        const storedUser = JSON.parse(storedUserString) as AuthUser;
+        // Validar que el usuario almacenado tenga la estructura esperada
+        if (
+          storedUser &&
+          typeof storedUser.id === "number" &&
+          typeof storedUser.is_admin === "boolean"
+        ) {
+          setToken(storedToken);
+          setUser(storedUser);
+        } else {
+          // Si los datos del usuario no son válidos, limpiar localStorage
+          console.warn("Stored user data is invalid. Clearing auth storage.");
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("authUser");
+        }
       }
+    } catch (error) {
+      // Si hay un error al parsear (ej. JSON malformado), limpiar localStorage
+      console.error("Error parsing stored auth data:", error);
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+    } finally {
+      setIsLoading(false); // Finaliza la carga independientemente del resultado
     }
-    setIsLoading(false);
-  }, []);
+  }, []); // El array vacío asegura que esto se ejecute solo una vez al montar
 
   const login = (newToken: string, userData: AuthUser) => {
     localStorage.setItem("authToken", newToken);
@@ -56,25 +79,32 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.removeItem("authUser");
     setToken(null);
     setUser(null);
+    // Podrías querer redirigir al usuario a la página de login aquí
+    // usando useNavigate, pero eso usualmente se maneja en el componente que llama a logout.
   };
 
-  const isAuthenticated = !!token;
-  const isAdmin = !!user?.is_admin;
+  // Memoizar estos valores para optimizar el rendimiento,
+  // evitando re-renders innecesarios en los consumidores si el token o el usuario no han cambiado realmente.
+  const isAuthenticated = useMemo(() => !!token, [token]);
+  const isAdmin = useMemo(() => !!user?.is_admin, [user]);
+
+  // Memoizar el valor del contexto para evitar re-renders innecesarios de los consumidores
+  // si las props del Provider no cambian.
+  const contextValue = useMemo(
+    () => ({
+      token,
+      user,
+      isAuthenticated,
+      isAdmin,
+      login,
+      logout,
+      isLoading,
+    }),
+    [token, user, isAuthenticated, isAdmin, isLoading]
+  ); // login y logout son estables por definición de useState
 
   return (
-    <AuthContext.Provider
-      value={{
-        token,
-        user,
-        isAuthenticated,
-        isAdmin,
-        login,
-        logout,
-        isLoading,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 

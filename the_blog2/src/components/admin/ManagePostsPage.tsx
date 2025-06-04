@@ -1,4 +1,3 @@
-// src/components/admin/ManagePostsPage.tsx
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -33,7 +32,7 @@ interface ApiResponse {
 }
 
 const API_BASE_URL = "http://127.0.0.1:5000"; // Considera mover esto a variables de entorno
-const ITEMS_PER_PAGE = 5; // Coincide con el per_page por defecto del backend o el que desees usar
+const ITEMS_PER_PAGE = 10; // Coincide con el per_page por defecto del backend o el que desees usar
 
 const ManagePostsPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);

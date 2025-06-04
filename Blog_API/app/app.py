@@ -33,14 +33,12 @@ def create_app():
     current_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     current_app.config['SQLALCHEMY_ECHO'] = False
     # ... otras configuraciones de la app ...
-    current_app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'tu-clave-secreta-predeterminada') # Asegúrate de tener esto para JWT
+    current_app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY') # Asegúrate de tener esto para JWT
 
     # Inicializar extensiones
     db.init_app(current_app)
     bcrypt.init_app(current_app) # <--- INICIALIZACIÓN DE BCRYPT CON LA APP
     jwt.init_app(current_app)  # O con 'app' si usas 'app = Flask(__name__)'
-
-    # jwt.init_app(current_app) # Si usas Flask-JWT-Extended, también debe inicializarse aquí
 
     # Registrar Blueprints
     current_app.register_blueprint(main_bp) # Puedes añadir un prefijo, ej: url_prefix='/api'

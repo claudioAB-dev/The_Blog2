@@ -12,14 +12,47 @@ main_bp = Blueprint('main', __name__)
 # --- Decorador para rutas de Administrador ---
 def admin_required(fn):
     @wraps(fn)
-    @jwt_required()
+    @jwt_required() # Esta línea ya maneja la validez básica del token (formato, expiración, firma)
+                    # Si falla aquí, usualmente devuelve 401 o 422 dependiendo de la configuración de error de JWTManager.
     def wrapper(*args, **kwargs):
-        current_user_id = get_jwt_identity()
-        user = Autor.query.get(current_user_id)
-        if user and user.is_admin:
-            return fn(*args, **kwargs)
-        else:
-            return jsonify(msg="Acceso denegado: Se requieren permisos de administrador."), 403
+        current_app.logger.info("--- admin_required decorator invoked ---")
+        try:
+            current_user_id = get_jwt_identity()
+            current_app.logger.info(f"ADMIN_REQUIRED: JWT Identity (user_id from token): '{current_user_id}' (Type: {type(current_user_id)})")
+
+            if not current_user_id:
+                # Esto no debería ocurrir si @jwt_required() tuvo éxito,
+                # pero es una comprobación adicional.
+                current_app.logger.warning("ADMIN_REQUIRED: No identity found in JWT after @jwt_required().")
+                return jsonify(msg="Acceso denegado: Identidad de usuario no encontrada en el token."), 403
+
+            # Intenta convertir el ID a entero si es necesario, aunque Flask-JWT-Extended suele devolver el tipo original.
+            # Si tu ID de Autor es un entero, la identidad en el token también debería serlo.
+            try:
+                user_id_int = int(current_user_id)
+            except ValueError:
+                current_app.logger.error(f"ADMIN_REQUIRED: JWT Identity '{current_user_id}' is not a valid integer.")
+                return jsonify(msg="Acceso denegado: Formato de identidad de usuario inválido."), 403
+
+            user = Autor.query.get(user_id_int)
+
+            if user:
+                current_app.logger.info(f"ADMIN_REQUIRED: User found in DB: email='{user.email}', is_admin={user.is_admin} (Type: {type(user.is_admin)})")
+                if user.is_admin: # Asegúrate que `is_admin` sea un booleano o se evalúe correctamente.
+                    current_app.logger.info(f"ADMIN_REQUIRED: Access GRANTED for user '{user.email}'.")
+                    return fn(*args, **kwargs)
+                else:
+                    current_app.logger.warning(f"ADMIN_REQUIRED: Access DENIED. User '{user.email}' (ID: {user.id}) is NOT an admin.")
+                    return jsonify(msg="Acceso denegado: Se requieren permisos de administrador."), 403
+            else:
+                current_app.logger.warning(f"ADMIN_REQUIRED: Access DENIED. No user found in DB for ID: {user_id_int}")
+                return jsonify(msg="Acceso denegado: Usuario no encontrado en la base de datos."), 403
+
+        except Exception as e:
+            current_app.logger.error(f"ADMIN_REQUIRED: Exception during decorator execution: {str(e)}")
+            import traceback
+            current_app.logger.error(traceback.format_exc())
+            return jsonify(msg="Error interno durante la verificación de permisos."), 500
     return wrapper
 
 def generar_slug(nombre):
@@ -449,40 +482,43 @@ def create_entrada():
         return jsonify({'error': 'Error interno del servidor al crear la entrada.'}), 500
 
 @main_bp.route('/admin/entradas', methods=['GET'])
-@admin_required
 def get_admin_entradas():
     try:
         page = request.args.get('page', 1, type=int)
-        per_page = request.args.get('per_page', 10, type=int)
-        if per_page < 1 or per_page > 100:
+        # El frontend usa ITEMS_PER_PAGE = 5, así que podemos usar 5 como default aquí o asegurar que el frontend siempre envíe per_page.
+        per_page = request.args.get('per_page', 5, type=int) # Ajustado default a 5 para coincidir con frontend
+
+        if not (1 <= per_page <= 100):
             return jsonify({'message': 'El parámetro "per_page" debe estar entre 1 y 100.'}), 400
-        query_search = request.args.get('q', '', type=str)
-            
-        entradas_paginadas = db.paginate(
-            entradas_query.order_by(Entrada.fecha_creacion.desc()),
-            page=page,
-            per_page=per_page,
-            error_out=False
-        )        
-                
+
+        query_search = request.args.get('q', '', type=str).strip()
+
+        # Inicializar el query base
         entradas_query = Entrada.query
 
+        # Aplicar filtro de búsqueda si existe
         if query_search:
             search_term = f"%{query_search}%"
             entradas_query = entradas_query.filter(
-                or_( # <--- USO DE or_
+                or_(
                     Entrada.titulo_es.ilike(search_term),
                     Entrada.titulo_en.ilike(search_term),
                     Entrada.titulo_de.ilike(search_term),
                     Entrada.slug.ilike(search_term)
+                    # Considera añadir más campos a la búsqueda si es necesario, ej. resumen_es
                 )
             )
 
-                
-        
-        
+        # Aplicar ordenamiento y paginación
+        entradas_paginadas = db.paginate(
+            entradas_query.order_by(Entrada.fecha_creacion.desc()),
+            page=page,
+            per_page=per_page,
+            error_out=False # Evita un error 404 si la página está fuera de rango, devuelve lista vacía.
+        )
+
         entradas_items = entradas_paginadas.items
-        
+
         return jsonify({
             'entradas': [entrada.serialize() for entrada in entradas_items],
             'total_pages': entradas_paginadas.pages,
@@ -491,7 +527,11 @@ def get_admin_entradas():
         }), 200
     except Exception as e:
         current_app.logger.error(f"Error al obtener entradas para admin: {str(e)}")
+        # Es útil loggear el traceback completo para depurar errores 500
+        import traceback
+        current_app.logger.error(traceback.format_exc())
         return jsonify({'error': 'Error interno del servidor al obtener entradas.'}), 500
+
 
 @main_bp.route('/admin/entradas/<int:entrada_id>', methods=['GET'])
 @admin_required
