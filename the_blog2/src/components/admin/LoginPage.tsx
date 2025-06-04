@@ -1,14 +1,13 @@
 import React, { useState, type FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-// Podrías crear un CSS específico para LoginPage: import './LoginPage.css';
-
+import { useAuth } from "../../context/AuthContext"; //
+import "../style/admin.css";
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const auth = useAuth();
+  const auth = useAuth(); //
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,6 +21,7 @@ const LoginPage: React.FC = () => {
     try {
       // Usa la URL completa de tu API
       const response = await fetch("http://127.0.0.1:5000/login", {
+        //
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,14 +36,17 @@ const LoginPage: React.FC = () => {
       }
 
       if (!data.access_token || typeof data.is_admin === "undefined") {
+        //
         throw new Error("Respuesta inválida del servidor.");
       }
 
       if (!data.is_admin) {
+        //
         throw new Error("Acceso denegado. Se requiere ser administrador.");
       }
 
       auth.login(data.access_token, {
+        //
         id: data.user_id,
         email,
         is_admin: data.is_admin,
@@ -59,6 +62,7 @@ const LoginPage: React.FC = () => {
   return (
     <div
       style={{
+        // Using inline styles as admin.css was not provided
         maxWidth: "400px",
         margin: "50px auto",
         padding: "20px",

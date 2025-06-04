@@ -1,0 +1,337 @@
+/* src/components/admin/style/Admin.css */
+
+:root {
+  --admin-bg-color: #f4f6f8;
+  --admin-sidebar-bg: #2c3e50;
+  --admin-sidebar-text: #ecf0f1;
+  --admin-sidebar-link-hover-bg: #34495e;
+  --admin-sidebar-link-active-bg: #1abc9c;
+  --admin-content-bg: #ffffff;
+  --admin-text-color: #333;
+  --admin-border-color: #ddd;
+  --admin-primary-color: #3498db;
+  --admin-primary-hover-color: #2980b9;
+  --admin-danger-color: #e74c3c;
+  --admin-danger-hover-color: #c0392b;
+  --admin-success-color: #2ecc71;
+  --admin-warning-color: #f39c12;
+  --admin-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body.admin-active {
+  background-color: var(
+    --admin-bg-color
+  ); /* Aplicar fondo solo cuando el admin está activo */
+}
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: var(--admin-font-family);
+  color: var(--admin-text-color);
+}
+
+/* --- Barra Lateral (Sidebar) --- */
+.admin-sidebar {
+  width: 250px;
+  background-color: var(--admin-sidebar-bg);
+  color: var(--admin-sidebar-text);
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-sidebar h3 {
+  margin: 0 0 25px 0;
+  font-size: 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--admin-sidebar-link-hover-bg);
+  padding-bottom: 15px;
+}
+
+.admin-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.admin-sidebar ul li a {
+  display: block;
+  padding: 12px 15px;
+  color: var(--admin-sidebar-text);
+  text-decoration: none;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-sidebar ul li a:hover {
+  background-color: var(--admin-sidebar-link-hover-bg);
+  color: #fff;
+}
+
+.admin-sidebar ul li a.active {
+  /* Para el enlace activo, si usas NavLink con clase 'active' */
+  background-color: var(--admin-sidebar-link-active-bg);
+  font-weight: bold;
+  color: #fff;
+}
+
+.admin-sidebar .admin-logout-button {
+  background-color: var(--admin-danger-color);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+  margin-top: 20px;
+}
+
+.admin-sidebar .admin-logout-button:hover {
+  background-color: var(--admin-danger-hover-color);
+}
+
+/* --- Contenido Principal del Admin --- */
+.admin-main-content {
+  flex: 1;
+  padding: 25px;
+  background-color: var(
+    --admin-bg-color
+  ); /* Fondo general del área de contenido */
+}
+
+.admin-page-container {
+  background-color: var(
+    --admin-content-bg
+  ); /* Fondo blanco para el contenedor de la página específica */
+  padding: 20px 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.admin-page-container h1,
+.admin-page-container h2 {
+  color: var(--admin-text-color);
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--admin-border-color);
+  padding-bottom: 10px;
+}
+
+/* --- Formularios --- */
+.admin-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="email"],
+.admin-form input[type="password"],
+.admin-form textarea,
+.admin-form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid var(--admin-border-color);
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+}
+
+.admin-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.admin-form .form-group {
+  margin-bottom: 20px;
+}
+
+/* --- Botones --- */
+.admin-button,
+button.admin-button {
+  /* Asegurar especificidad para <button> */
+  padding: 10px 18px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  text-decoration: none; /* Para enlaces estilizados como botones */
+  display: inline-block; /* Para enlaces */
+  text-align: center;
+  margin-right: 8px; /* Espacio entre botones */
+}
+.admin-button:active {
+  transform: translateY(1px);
+}
+
+.admin-button-primary {
+  background-color: var(--admin-primary-color);
+  color: white;
+}
+.admin-button-primary:hover {
+  background-color: var(--admin-primary-hover-color);
+}
+
+.admin-button-danger {
+  background-color: var(--admin-danger-color);
+  color: white;
+}
+.admin-button-danger:hover {
+  background-color: var(--admin-danger-hover-color);
+}
+
+.admin-button-success {
+  background-color: var(--admin-success-color);
+  color: white;
+}
+.admin-button-success:hover {
+  background-color: #27ae60; /* Un poco más oscuro */
+}
+
+.admin-button-secondary {
+  background-color: #bdc3c7;
+  color: #333;
+}
+.admin-button-secondary:hover {
+  background-color: #95a5a6;
+}
+
+/* --- Tablas --- */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid var(--admin-border-color);
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.admin-table th {
+  background-color: #e9ecef; /* Un gris claro para cabeceras */
+  font-weight: bold;
+}
+
+.admin-table tr:nth-child(even) {
+  background-color: #f8f9fa; /* Rayado para filas pares */
+}
+
+.admin-table tr:hover {
+  background-color: #f1f3f5; /* Hover sutil */
+}
+
+.admin-table .actions-cell button {
+  margin-right: 5px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+}
+.admin-table .actions-cell button:last-child {
+  margin-right: 0;
+}
+
+/* --- Mensajes y Alertas --- */
+.admin-alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+.admin-alert-error,
+.admin-error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+.admin-alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+.admin-alert-loading,
+.admin-loading-message {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+}
+
+/* --- Estilos específicos para páginas Admin --- */
+
+/* LoginPage.tsx */
+.login-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--admin-bg-color);
+}
+
+.login-form-wrapper {
+  background-color: var(--admin-content-bg);
+  padding: 30px 35px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form-wrapper h2 {
+  text-align: center;
+  color: var(--admin-text-color);
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+}
+
+/* ManagePostsPage.tsx & DashboardPage.tsx (usarán .admin-page-container) */
+.admin-page-container .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.admin-page-container .page-header h2 {
+  margin-bottom: 0; /* Quitar margen si está dentro de page-header */
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* --- Responsividad Sencilla --- */
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    height: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  .admin-main-content {
+    padding: 15px;
+  }
+  .admin-page-container {
+    padding: 15px;
+  }
+  .admin-table .actions-cell button {
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  .admin-table .actions-cell button:last-child {
+    margin-bottom: 0;
+  }
+}

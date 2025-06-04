@@ -20,7 +20,6 @@ from .routes import main_bp
 # Puedes crear la instancia de bcrypt aquí
 bcrypt = Bcrypt()
 
-from . import commands
 
 def create_app():
     current_app = Flask(__name__)
@@ -45,7 +44,6 @@ def create_app():
 
     # Registrar Blueprints
     current_app.register_blueprint(main_bp) # Puedes añadir un prefijo, ej: url_prefix='/api'
-    commands.register_commands(current_app)
     return current_app
 
 app = create_app() 

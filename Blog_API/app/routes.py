@@ -1,18 +1,18 @@
 from flask import Blueprint, request, jsonify, current_app
 import re
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import or_ 
+from sqlalchemy import or_ # <--- IMPORTACIÓN AÑADIDA
 from .models import db, Autor, Entrada, Comentario, Categoria, MensajeContacto
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt # Para roles/claims
-from functools import wraps 
-from datetime import datetime 
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt 
+from functools import wraps
+from datetime import datetime # <--- IMPORTACIÓN AÑADIDA
 
 main_bp = Blueprint('main', __name__)
 
 # --- Decorador para rutas de Administrador ---
 def admin_required(fn):
     @wraps(fn)
-    @jwt_required() 
+    @jwt_required()
     def wrapper(*args, **kwargs):
         current_user_id = get_jwt_identity()
         user = Autor.query.get(current_user_id)
@@ -21,6 +21,7 @@ def admin_required(fn):
         else:
             return jsonify(msg="Acceso denegado: Se requieren permisos de administrador."), 403
     return wrapper
+
 def generar_slug(nombre):
     slug = nombre.lower()
     slug = re.sub(r'\s+', '-', slug)
@@ -28,6 +29,7 @@ def generar_slug(nombre):
     slug = re.sub(r'\-{2,}', '-', slug)
     slug = slug.strip('-')
     return slug
+
 # --- Rutas de Autenticación ---
 @main_bp.route('/login', methods=['POST'])
 def login():
@@ -40,8 +42,8 @@ def login():
 
     autor = Autor.query.filter_by(email=email).first()
     if autor and autor.check_password(contrasena):
-        access_token = create_access_token(identity=autor.id) # Puedes añadir más claims si es necesario
-        return jsonify(access_token=access_token, user_id=autor.id, is_admin=autor.is_admin), 200 # Devolver is_admin puede ser útil para el frontend
+        access_token = create_access_token(identity=autor.id)
+        return jsonify(access_token=access_token, user_id=autor.id, is_admin=autor.is_admin), 200
     else:
         return jsonify({"msg": "Email o contraseña incorrectos"}), 401
 
@@ -67,7 +69,7 @@ def get_autor_by_id(autor_id):
         return jsonify({'error': f'Error interno del servidor al obtener autor {autor_id}.'}), 500
 
 @main_bp.route('/autores', methods=['POST'])
-@admin_required # Solo administradores pueden crear autores
+@admin_required
 def create_autor():
     try:
         data = request.get_json()
@@ -76,8 +78,8 @@ def create_autor():
 
         nombre = data.get('nombre')
         email = data.get('email')
-        contrasena = data.get('contrasena') # Nueva contraseña
-        is_admin_request = data.get('is_admin', False) # Opcional: permitir que un admin cree otro admin
+        contrasena = data.get('contrasena')
+        is_admin_request = data.get('is_admin', False)
 
         if not nombre or not email or not contrasena:
             return jsonify({'message': 'Nombre, email y contraseña son requeridos'}), 400
@@ -87,7 +89,7 @@ def create_autor():
             return jsonify({'message': 'El email ya está registrado'}), 409
 
         new_autor = Autor(nombre=nombre, email=email, is_admin=is_admin_request)
-        new_autor.set_password(contrasena) # Hashear la contraseña
+        new_autor.set_password(contrasena)
         db.session.add(new_autor)
         db.session.commit()
 
@@ -102,15 +104,14 @@ def create_autor():
         return jsonify({'error': 'Error interno del servidor al crear el autor.'}), 500
 
 @main_bp.route('/autores/<int:autor_id>', methods=['PUT'])
-@jwt_required() 
+@jwt_required()
 def update_autor(autor_id):
     current_user_id = get_jwt_identity()
     autor_to_update = Autor.query.get_or_404(autor_id)
     current_user = Autor.query.get(current_user_id)
 
-    if not current_user: 
+    if not current_user:
         return jsonify({"msg": "Usuario actual no encontrado."}), 403
-
 
     if not current_user.is_admin and current_user_id != autor_to_update.id:
         return jsonify({"msg": "No tienes permiso para modificar este autor."}), 403
@@ -129,25 +130,23 @@ def update_autor(autor_id):
             autor_to_update.email = data['email']
         if 'biografia' in data:
             autor_to_update.biografia = data['biografia']
-        
+
         if 'is_admin' in data and current_user.is_admin:
              autor_to_update.is_admin = bool(data['is_admin'])
         elif 'is_admin' in data and not current_user.is_admin:
             return jsonify({"msg": "No tienes permiso para cambiar el estado de administrador."}), 403
 
-
-        if 'contrasena' in data and data['contrasena']: # Si se provee nueva contraseña
+        if 'contrasena' in data and data['contrasena']:
             if not current_user.is_admin and current_user_id != autor_to_update.id:
                  return jsonify({"msg": "No tienes permiso para cambiar la contraseña de este autor."}), 403
             autor_to_update.set_password(data['contrasena'])
-            
+
         db.session.commit()
         return jsonify(autor_to_update.serialize()), 200
     except IntegrityError as e:
         db.session.rollback()
         current_app.logger.error(f"Error de integridad al actualizar autor {autor_id}: {str(e.orig)}")
-        # Comprobar si el error es por email duplicado
-        if 'autor.email' in str(e.orig).lower(): # Ajusta según tu motor de BD y mensaje de error
+        if 'autor.email' in str(e.orig).lower():
              return jsonify({'message': 'Error: El email proporcionado ya existe.'}), 409
         return jsonify({'message': 'Error de integridad en la base de datos.', 'details': str(e.orig)}), 500
     except Exception as e:
@@ -155,25 +154,20 @@ def update_autor(autor_id):
         current_app.logger.error(f"Error al actualizar autor {autor_id}: {str(e)}")
         return jsonify({'error': f'Error interno del servidor al actualizar autor {autor_id}.'}), 500
 
-
 @main_bp.route('/autores/<int:autor_id>', methods=['DELETE'])
-@admin_required # Solo administradores pueden eliminar autores
+@admin_required
 def delete_autor(autor_id):
     try:
         autor = Autor.query.get(autor_id)
         if not autor:
             return jsonify({'message': 'Autor no encontrado.'}), 404
-        
-        # Opcional: impedir que un admin se elimine a sí mismo o manejarlo
+
         current_user_id = get_jwt_identity()
         if autor.id == current_user_id:
             return jsonify({'message': 'No puedes eliminar tu propia cuenta de administrador por esta vía.'}), 403
 
-        # Opcional: ¿Qué pasa con las entradas de este autor?
-        # Podrías reasignarlas, eliminarlas, o impedir la eliminación si tiene entradas.
         if autor.entradas:
              return jsonify({'message': 'No se puede eliminar el autor porque tiene entradas asociadas. Por favor, reasigne o elimine sus entradas primero.'}), 409
-
 
         db.session.delete(autor)
         db.session.commit()
@@ -188,30 +182,30 @@ def delete_autor(autor_id):
         return jsonify({'error': f'Error interno del servidor al eliminar el autor {autor_id}.'}), 500
 
 # --- Rutas de Categorías ---
-
-@main_bp.route('/categorias/POST', methods=['POST'])
-@admin_required # Solo administradores pueden crear categorías
+@main_bp.route('/categorias/POST', methods=['POST']) # Renombrada para claridad, podría ser solo /categorias con POST
+@admin_required
 def create_categoria():
     data = request.get_json()
     if not data:
         return jsonify({'message': 'No se proporcionaron datos JSON.'}), 400
 
-    # Adaptado para los campos multi-idioma del modelo Categoria
     nombre_es = data.get('nombre_es')
     nombre_en = data.get('nombre_en')
     nombre_de = data.get('nombre_de')
     slug_propuesto = data.get('slug')
-    descripcion = data.get('descripcion') # Asegúrate que el modelo Categoria tenga este campo
+    descripcion = data.get('descripcion') 
 
-    if not nombre_es: # Asumimos que nombre_es es el primario y obligatorio
+    if not nombre_es:
         return jsonify({'message': 'El campo "nombre_es" (nombre en español) es obligatorio.'}), 400
 
-    slug_final = slug_propuesto if slug_propuesto else generar_slug(nombre_es)
-    
-    # Verificar unicidad de slug (y nombres si es necesario)
+    slug_final = slug_propuesto.strip() if slug_propuesto and slug_propuesto.strip() else generar_slug(nombre_es)
+    if not slug_final:
+        return jsonify({'message': 'No se pudo generar o usar un slug válido.'}), 400
+
+
     if Categoria.query.filter_by(slug=slug_final).first():
         return jsonify({'message': f'Error: El slug "{slug_final}" ya existe.'}), 409
-    if Categoria.query.filter_by(nombre_es=nombre_es).first(): # Si nombre_es también debe ser único
+    if Categoria.query.filter_by(nombre_es=nombre_es).first():
         return jsonify({'message': f'Error: El nombre en español "{nombre_es}" ya existe.'}), 409
 
     nueva_categoria = Categoria(
@@ -227,11 +221,10 @@ def create_categoria():
         return jsonify(nueva_categoria.serialize()), 201
     except IntegrityError as e:
         db.session.rollback()
-        # El chequeo explícito de arriba debería prevenir la mayoría de estos, pero por si acaso:
         if 'categorias.slug' in str(e.orig):
-             return jsonify({'message': 'Error: El slug de la categoría ya existe.'}), 409
-        elif 'categorias.nombre_es' in str(e.orig): # Si tienes constraint unique en nombre_es
-             return jsonify({'message': 'Error: El nombre (ES) de la categoría ya existe.'}), 409
+             return jsonify({'message': 'Error: El slug de la categoría ya existe (error de integridad).'}), 409
+        elif 'categorias.nombre_es' in str(e.orig):
+             return jsonify({'message': 'Error: El nombre (ES) de la categoría ya existe (error de integridad).'}), 409
         else:
             current_app.logger.error(f"Error de integridad al crear categoría: {str(e.orig)}")
             return jsonify({'message': 'Error de integridad en la base de datos.', 'details': str(e.orig)}), 500
@@ -239,7 +232,6 @@ def create_categoria():
         db.session.rollback()
         current_app.logger.error(f"Error general al crear categoría: {str(e)}")
         return jsonify({'error': 'Error interno del servidor al crear la categoría.'}), 500
-
 
 @main_bp.route('/categorias', methods=['GET'])
 def get_categorias():
@@ -262,7 +254,7 @@ def get_categoria_by_id(categoria_id):
         return jsonify({'error': f'Error interno del servidor al obtener categoría {categoria_id}.'}), 500
 
 @main_bp.route('/categorias/<int:categoria_id>', methods=['PUT'])
-@admin_required # Solo administradores pueden actualizar categorías
+@admin_required
 def update_categoria(categoria_id):
     categoria = Categoria.query.get_or_404(categoria_id)
     data = request.get_json()
@@ -271,34 +263,32 @@ def update_categoria(categoria_id):
 
     try:
         if 'nombre_es' in data:
-            # Verificar si el nuevo nombre_es ya existe para otra categoría
             if data['nombre_es'] != categoria.nombre_es and Categoria.query.filter(Categoria.nombre_es == data['nombre_es'], Categoria.id != categoria_id).first():
                 return jsonify({'message': f'Error: El nombre en español "{data["nombre_es"]}" ya existe.'}), 409
             categoria.nombre_es = data['nombre_es']
-            # Si se cambia el nombre_es, regenerar slug si no se proporciona uno nuevo y el actual se basaba en el nombre_es antiguo
-            if 'slug' not in data or not data['slug']:
-                 # Lógica más compleja podría ser necesaria si el slug actual no es derivado de nombre_es
+            if 'slug' not in data or not data['slug'].strip():
                  categoria.slug = generar_slug(data['nombre_es'])
 
+        if 'nombre_en' in data: categoria.nombre_en = data.get('nombre_en')
+        if 'nombre_de' in data: categoria.nombre_de = data.get('nombre_de')
+        if 'descripcion' in data: categoria.descripcion = data.get('descripcion')
 
-        if 'nombre_en' in data: categoria.nombre_en = data['nombre_en']
-        if 'nombre_de' in data: categoria.nombre_de = data['nombre_de']
-        if 'descripcion' in data: categoria.descripcion = data['descripcion']
-        
-        if 'slug' in data and data['slug']:
-            if data['slug'] != categoria.slug and Categoria.query.filter(Categoria.slug == data['slug'], Categoria.id != categoria_id).first():
-                return jsonify({'message': f'Error: El slug "{data["slug"]}" ya existe.'}), 409
-            categoria.slug = data['slug']
-        
+        if 'slug' in data and data['slug'].strip():
+            nuevo_slug = generar_slug(data['slug'].strip())
+            if not nuevo_slug:
+                 return jsonify({'message': 'El slug proporcionado es inválido.'}), 400
+            if nuevo_slug != categoria.slug and Categoria.query.filter(Categoria.slug == nuevo_slug, Categoria.id != categoria_id).first():
+                return jsonify({'message': f'Error: El slug "{nuevo_slug}" ya existe.'}), 409
+            categoria.slug = nuevo_slug
+
         db.session.commit()
         return jsonify(categoria.serialize()), 200
     except IntegrityError as e:
         db.session.rollback()
-        # Chequeos explícitos deberían cubrir la mayoría, pero como fallback:
         if 'categorias.slug' in str(e.orig):
-             return jsonify({'message': 'Error: El slug de la categoría ya existe.'}), 409
+             return jsonify({'message': 'Error: El slug de la categoría ya existe (error de integridad).'}), 409
         elif 'categorias.nombre_es' in str(e.orig):
-             return jsonify({'message': 'Error: El nombre (ES) de la categoría ya existe.'}), 409
+             return jsonify({'message': 'Error: El nombre (ES) de la categoría ya existe (error de integridad).'}), 409
         else:
             current_app.logger.error(f"Error de integridad al actualizar categoría {categoria_id}: {str(e.orig)}")
             return jsonify({'message': 'Error de integridad en la base de datos.', 'details': str(e.orig)}), 500
@@ -308,18 +298,17 @@ def update_categoria(categoria_id):
         return jsonify({'error': f'Error interno del servidor al actualizar categoría {categoria_id}.'}), 500
 
 @main_bp.route('/categorias/<int:categoria_id>', methods=['DELETE'])
-@admin_required # Solo administradores pueden eliminar categorías
+@admin_required
 def delete_categoria(categoria_id):
     categoria = Categoria.query.get_or_404(categoria_id)
     try:
-        # Verificar si hay entradas asociadas a esta categoría
         if Entrada.query.filter_by(categoria_id=categoria_id).first():
             return jsonify({'message': 'Error: No se puede eliminar la categoría porque tiene entradas asociadas. Reasigne o elimine las entradas primero.'}), 409
-            
+
         db.session.delete(categoria)
         db.session.commit()
         return jsonify({'message': 'Categoría eliminada exitosamente.'}), 200
-    except IntegrityError as e: # Poco probable si la verificación de entradas asociadas se hace primero
+    except IntegrityError as e:
         db.session.rollback()
         current_app.logger.error(f"Error de integridad al eliminar categoría {categoria_id}: {str(e.orig)}")
         return jsonify({'message': 'Error de integridad: No se pudo eliminar la categoría.', 'details': str(e.orig)}), 409
@@ -340,13 +329,12 @@ def create_contacto():
         asunto = data.get('asunto')
         mensaje = data.get('mensaje')
 
-        if not nombre or not email: # Asunto y mensaje pueden ser opcionales según tu lógica de frontend
+        if not nombre or not email:
             return jsonify({'message': 'Nombre y email son requeridos'}), 400
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             return jsonify({'message': 'Formato de email inválido'}), 400
-        if not mensaje:
+        if not mensaje: # Asumiendo que el mensaje también es requerido
             return jsonify({'message': 'El mensaje es requerido'}), 400
-
 
         new_contacto = MensajeContacto(
             nombre_remitente=nombre,
@@ -356,7 +344,16 @@ def create_contacto():
         )
         db.session.add(new_contacto)
         db.session.commit()
-        return jsonify(new_contacto.__dict__), 201 # O una serialización más controlada
+        # Considerar crear un método serialize() para MensajeContacto también
+        return jsonify({
+            'id': new_contacto.id,
+            'nombre_remitente': new_contacto.nombre_remitente,
+            'email_remitente': new_contacto.email_remitente,
+            'asunto': new_contacto.asunto,
+            'mensaje': new_contacto.mensaje,
+            'fecha_envio': new_contacto.fecha_envio.isoformat() if new_contacto.fecha_envio else None,
+            'leido': new_contacto.leido
+        }), 201
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error al crear mensaje de contacto: {str(e)}")
@@ -378,8 +375,8 @@ def get_entradas():
     except Exception as e:
         current_app.logger.error(f"Error al obtener entradas: {str(e)}")
         return jsonify({'error': 'Error interno del servidor al obtener entradas.'}), 500
-# --- Endpoints CRUD para Entradas (Protegidos por Admin) ---
 
+# --- Endpoints CRUD para Entradas (Protegidos por Admin) ---
 @main_bp.route('/admin/entradas', methods=['POST'])
 @admin_required
 def create_entrada():
@@ -387,13 +384,11 @@ def create_entrada():
     if not data:
         return jsonify({'message': 'No se proporcionaron datos JSON.'}), 400
 
-    # Campos requeridos y opcionales
     required_fields = ['autor_id', 'categoria_id', 'titulo_es', 'resumen_es', 'contenido_es']
     for field in required_fields:
         if field not in data or not data[field]:
             return jsonify({'message': f'El campo "{field}" es obligatorio y no puede estar vacío.'}), 400
 
-    # Validación de existencia de Autor y Categoría
     if not Autor.query.get(data['autor_id']):
         return jsonify({'message': f'El autor con id {data["autor_id"]} no existe.'}), 404
     if not Categoria.query.get(data['categoria_id']):
@@ -403,26 +398,33 @@ def create_entrada():
     if not slug_propuesto:
         slug_final = generar_slug(data['titulo_es'])
     else:
-        slug_final = generar_slug(slug_propuesto) # Asegurar que el slug proporcionado también se limpie
+        slug_final = generar_slug(slug_propuesto)
 
-    if not slug_final: # Si después de generar el slug queda vacío (ej. título solo con símbolos)
+    if not slug_final:
         return jsonify({'message': 'No se pudo generar un slug válido para la entrada. El título podría ser inválido.'}), 400
-        
-    # Verificar unicidad del slug
+
     if Entrada.query.filter_by(slug=slug_final).first():
         return jsonify({'message': f'El slug "{slug_final}" ya existe. Proporciona un slug único o modifica el título.'}), 409
 
     try:
+        fecha_publicacion_str = data.get('fecha_publicacion')
+        fecha_publicacion_dt = None
+        if fecha_publicacion_str and data.get('estado') == 'publicado':
+            try:
+                fecha_publicacion_dt = datetime.fromisoformat(fecha_publicacion_str)
+            except ValueError:
+                return jsonify({'message': 'Formato de fecha_publicacion inválido. Usar ISO 8601.'}), 400
+        
         nueva_entrada = Entrada(
             autor_id=data['autor_id'],
             categoria_id=data['categoria_id'],
             titulo_es=data['titulo_es'].strip(),
             slug=slug_final,
             resumen_es=data['resumen_es'].strip(),
-            contenido_es=data['contenido_es'].strip(), # Considerar sanitización si es HTML
+            contenido_es=data['contenido_es'].strip(),
             imagen_destacada=data.get('imagen_destacada', '').strip() or None,
-            estado=data.get('estado', 'borrador'), # 'borrador' o 'publicado'
-            fecha_publicacion=datetime.fromisoformat(data['fecha_publicacion']) if data.get('fecha_publicacion') and data.get('estado') == 'publicado' else None,
+            estado=data.get('estado', 'borrador'),
+            fecha_publicacion=fecha_publicacion_dt,
             titulo_en=data.get('titulo_en', '').strip() or None,
             resumen_en=data.get('resumen_en', '').strip() or None,
             contenido_en=data.get('contenido_en', '').strip() or None,
@@ -437,7 +439,7 @@ def create_entrada():
         db.session.rollback()
         current_app.logger.error(f"Error de integridad al crear entrada: {str(e.orig)}")
         return jsonify({'message': 'Error de integridad en la base de datos al crear la entrada.', 'details': str(e.orig)}), 500
-    except ValueError as e: # Para errores de formato de fecha
+    except ValueError as e: 
         db.session.rollback()
         current_app.logger.error(f"Error de formato de datos al crear entrada: {str(e)}")
         return jsonify({'message': f'Error en el formato de los datos: {str(e)}'}), 400
@@ -452,27 +454,37 @@ def get_admin_entradas():
     try:
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
-        query_search = request.args.get('q', '', type=str) # Parámetro de búsqueda
-        
+        if per_page < 1 or per_page > 100:
+            return jsonify({'message': 'El parámetro "per_page" debe estar entre 1 y 100.'}), 400
+        query_search = request.args.get('q', '', type=str)
+            
+        entradas_paginadas = db.paginate(
+            entradas_query.order_by(Entrada.fecha_creacion.desc()),
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )        
+                
         entradas_query = Entrada.query
 
         if query_search:
             search_term = f"%{query_search}%"
-            # Buscar en títulos y slugs
             entradas_query = entradas_query.filter(
-                or_(
+                or_( # <--- USO DE or_
                     Entrada.titulo_es.ilike(search_term),
                     Entrada.titulo_en.ilike(search_term),
                     Entrada.titulo_de.ilike(search_term),
                     Entrada.slug.ilike(search_term)
                 )
             )
-            
-        entradas_paginadas = entradas_query.order_by(Entrada.fecha_creacion.desc()).paginate(page=page, per_page=per_page, error_out=False)
-        entradas = entradas_paginadas.items
+
+                
+        
+        
+        entradas_items = entradas_paginadas.items
         
         return jsonify({
-            'entradas': [entrada.serialize() for entrada in entradas],
+            'entradas': [entrada.serialize() for entrada in entradas_items],
             'total_pages': entradas_paginadas.pages,
             'current_page': entradas_paginadas.page,
             'total_items': entradas_paginadas.total
@@ -503,16 +515,14 @@ def update_entrada(entrada_id):
         return jsonify({'message': 'No se proporcionaron datos JSON.'}), 400
 
     try:
-        # Actualizar campos básicos
         if 'titulo_es' in data and data['titulo_es'].strip(): entrada.titulo_es = data['titulo_es'].strip()
         if 'resumen_es' in data and data['resumen_es'].strip(): entrada.resumen_es = data['resumen_es'].strip()
-        if 'contenido_es' in data and data['contenido_es'].strip(): entrada.contenido_es = data['contenido_es'].strip() # Considerar sanitización
+        if 'contenido_es' in data and data['contenido_es'].strip(): entrada.contenido_es = data['contenido_es'].strip()
 
-        # Actualizar traducciones
         for lang_code in ['en', 'de']:
-            if f'titulo_{lang_code}' in data: entrada.setattr(f'titulo_{lang_code}', data[f'titulo_{lang_code}'].strip() or None)
-            if f'resumen_{lang_code}' in data: entrada.setattr(f'resumen_{lang_code}', data[f'resumen_{lang_code}'].strip() or None)
-            if f'contenido_{lang_code}' in data: entrada.setattr(f'contenido_{lang_code}', data[f'contenido_{lang_code}'].strip() or None)
+            if f'titulo_{lang_code}' in data: setattr(entrada, f'titulo_{lang_code}', data[f'titulo_{lang_code}'].strip() or None)
+            if f'resumen_{lang_code}' in data: setattr(entrada, f'resumen_{lang_code}', data[f'resumen_{lang_code}'].strip() or None)
+            if f'contenido_{lang_code}' in data: setattr(entrada, f'contenido_{lang_code}', data[f'contenido_{lang_code}'].strip() or None)
         
         if 'slug' in data and data['slug'].strip():
             nuevo_slug = generar_slug(data['slug'].strip())
@@ -522,14 +532,12 @@ def update_entrada(entrada_id):
                 return jsonify({'message': f'El slug "{nuevo_slug}" ya existe.'}), 409
             entrada.slug = nuevo_slug
         elif 'titulo_es' in data and data['titulo_es'].strip() and (not data.get('slug') or not data['slug'].strip()):
-            # Si se actualiza el título principal y no se da un slug, regenerar slug
             nuevo_slug_por_titulo = generar_slug(data['titulo_es'].strip())
             if not nuevo_slug_por_titulo:
                  return jsonify({'message': 'No se pudo generar un slug válido a partir del título.'}), 400
             if nuevo_slug_por_titulo != entrada.slug and Entrada.query.filter_by(slug=nuevo_slug_por_titulo).first():
                  return jsonify({'message': f'Un slug generado a partir del nuevo título ("{nuevo_slug_por_titulo}") ya existe. Proporcione un slug manualmente.'}), 409
             entrada.slug = nuevo_slug_por_titulo
-
 
         if 'autor_id' in data:
             if not Autor.query.get(data['autor_id']):
@@ -542,16 +550,27 @@ def update_entrada(entrada_id):
             entrada.categoria_id = data['categoria_id']
 
         if 'imagen_destacada' in data: entrada.imagen_destacada = data['imagen_destacada'].strip() or None
-        if 'estado' in data and data['estado'] in ['borrador', 'publicado']: entrada.estado = data['estado']
         
-        if 'fecha_publicacion' in data:
-            entrada.fecha_publicacion = datetime.fromisoformat(data['fecha_publicacion']) if data['fecha_publicacion'] and entrada.estado == 'publicado' else None
-        elif entrada.estado == 'publicado' and not entrada.fecha_publicacion:
-            # Si se publica y no tiene fecha, se asigna la actual
-            entrada.fecha_publicacion = datetime.utcnow()
-        elif entrada.estado == 'borrador':
-            entrada.fecha_publicacion = None # Si vuelve a borrador, quitar fecha de publicación
+        if 'estado' in data and data['estado'] in ['borrador', 'publicado']: 
+            entrada.estado = data['estado']
+            if entrada.estado == 'publicado' and not entrada.fecha_publicacion:
+                 entrada.fecha_publicacion = datetime.utcnow()
+            elif entrada.estado == 'borrador':
+                 entrada.fecha_publicacion = None
 
+
+        if 'fecha_publicacion' in data:
+            fecha_publicacion_str = data.get('fecha_publicacion')
+            if fecha_publicacion_str and entrada.estado == 'publicado':
+                try:
+                    entrada.fecha_publicacion = datetime.fromisoformat(fecha_publicacion_str)
+                except ValueError:
+                    return jsonify({'message': 'Formato de fecha_publicacion inválido. Usar ISO 8601.'}), 400
+            elif not fecha_publicacion_str and entrada.estado == 'publicado': # Si se publica y no se manda fecha, se pone la actual
+                 entrada.fecha_publicacion = datetime.utcnow()
+            elif entrada.estado == 'borrador': # Si es borrador, se quita la fecha
+                 entrada.fecha_publicacion = None
+        
         entrada.fecha_actualizacion = datetime.utcnow()
         db.session.commit()
         return jsonify(entrada.serialize()), 200
@@ -559,7 +578,7 @@ def update_entrada(entrada_id):
         db.session.rollback()
         current_app.logger.error(f"Error de integridad al actualizar entrada {entrada_id}: {str(e.orig)}")
         return jsonify({'message': 'Error de integridad en la base de datos.', 'details': str(e.orig)}), 500
-    except ValueError as e: # Para errores de formato de fecha
+    except ValueError as e:
         db.session.rollback()
         current_app.logger.error(f"Error de formato de datos al actualizar entrada: {str(e)}")
         return jsonify({'message': f'Error en el formato de los datos: {str(e)}'}), 400
@@ -573,9 +592,6 @@ def update_entrada(entrada_id):
 def delete_entrada(entrada_id):
     entrada = Entrada.query.get_or_404(entrada_id)
     try:
-        # Opcional: Manejar comentarios asociados (ej. eliminar en cascada si el modelo lo define, o eliminarlos aquí)
-        # Comentario.query.filter_by(entrada_id=entrada_id).delete()
-        
         db.session.delete(entrada)
         db.session.commit()
         return jsonify({'message': 'Entrada eliminada exitosamente.'}), 200
@@ -584,18 +600,14 @@ def delete_entrada(entrada_id):
         current_app.logger.error(f"Error al eliminar entrada {entrada_id}: {str(e)}")
         return jsonify({'error': f'Error interno del servidor al eliminar la entrada {entrada_id}.'}), 500
 
-
 # --- Endpoints para Mensajes de Contacto (Admin) ---
-# La ruta POST /mensajecontacto ya existe y es pública.
-# Aquí crearemos las rutas para que el admin los gestione.
-
 @main_bp.route('/admin/mensajes_contacto', methods=['GET'])
 @admin_required
 def get_admin_mensajes_contacto():
     try:
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 10, type=int)
-        leido_filter = request.args.get('leido', type=str, default=None) # 'true', 'false', o nada
+        leido_filter = request.args.get('leido', type=str, default=None)
 
         query = MensajeContacto.query
 
@@ -606,7 +618,7 @@ def get_admin_mensajes_contacto():
                 query = query.filter_by(leido=False)
 
         mensajes_paginados = query.order_by(MensajeContacto.fecha_envio.desc()).paginate(page=page, per_page=per_page, error_out=False)
-        mensajes = mensajes_paginados.items
+        mensajes_items = mensajes_paginados.items
 
         return jsonify({
             'mensajes': [{
@@ -614,10 +626,10 @@ def get_admin_mensajes_contacto():
                 'nombre_remitente': msg.nombre_remitente,
                 'email_remitente': msg.email_remitente,
                 'asunto': msg.asunto,
-                'mensaje': msg.mensaje, # Considerar truncar si es muy largo para la lista
+                'mensaje': msg.mensaje,
                 'fecha_envio': msg.fecha_envio.isoformat() if msg.fecha_envio else None,
                 'leido': msg.leido
-            } for msg in mensajes],
+            } for msg in mensajes_items],
             'total_pages': mensajes_paginados.pages,
             'current_page': mensajes_paginados.page,
             'total_items': mensajes_paginados.total
@@ -633,11 +645,6 @@ def get_admin_mensaje_by_id(mensaje_id):
         mensaje = MensajeContacto.query.get(mensaje_id)
         if not mensaje:
             return jsonify({'message': 'Mensaje de contacto no encontrado.'}), 404
-        
-        # Opcional: Marcar como leído al verlo por primera vez
-        # if not mensaje.leido:
-        #     mensaje.leido = True
-        #     db.session.commit()
             
         return jsonify({
             'id': mensaje.id,
@@ -651,7 +658,6 @@ def get_admin_mensaje_by_id(mensaje_id):
     except Exception as e:
         current_app.logger.error(f"Error al obtener mensaje de contacto {mensaje_id}: {str(e)}")
         return jsonify({'error': f'Error interno del servidor al obtener el mensaje {mensaje_id}.'}), 500
-
 
 @main_bp.route('/admin/mensajes_contacto/<int:mensaje_id>/toggle_leido', methods=['PUT'])
 @admin_required

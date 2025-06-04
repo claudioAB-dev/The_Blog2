@@ -139,7 +139,7 @@ const getCategoryNameTranslated = (
 };
 
 const PostsPorCategoria: React.FC = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { categoria: slug } = useParams<{ categoria: string }>();
   const { currentLanguage } = useLanguage();
 
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
